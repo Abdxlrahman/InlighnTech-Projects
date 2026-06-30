@@ -1,0 +1,17 @@
+{
+  "name": "SSH Brute-Force Authentication Anomaly",
+  "description": "Detects 5+ failed SSH login attempts from a single source IP within a 60-second window, indicating potential credential stuffing or dictionary attacks.",
+  "risk_score": 73,
+  "severity": "high",
+  "type": "threshold",
+  "query": "(message : \"Failed password\" or message : \"Invalid user\") and message : \"sshd\"",
+  "index": ["logs-*"],
+  "threshold": {
+    "field": "source.ip",
+    "value": 5,
+    "cardinality": []
+  },
+  "interval": "1m",
+  "from": "now-65s",
+  "tags": ["MITRE ATT&CK T1110", "SSH", "Linux", "SOC Lab"]
+}\n

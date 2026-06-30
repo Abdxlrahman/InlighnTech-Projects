@@ -1,0 +1,35 @@
+# Threat Detection Rule: SSH Brute-Force Identification
+**Target Standard: MITRE ATT&CK Matrix T1110 (Brute Force)**
+
+---
+
+## 1. Rule Summary
+- **Name:** SSH Brute-Force Attempt Detected
+- **ID:** `sec-rule-ssh-brute-force-01`
+- **Severity:** High (Severity Score: 80)
+- **MITRE Mapping:** T1110.001 (Credential Stuffing)
+- **Description:** Detects an anomaly where a single source IP generates five or more failed authentication attempts via the SSH protocol within a one-minute window.
+
+---
+
+## 2. Kibana Query Language (KQL) Query
+Use the following query inside Kibana's **Discover** dashboard to locate brute-force activity:
+
+```kql
+(message : "Failed password" or message : "Invalid user") and message : "sshd"
+```
+
+---
+
+## 3. SIEM Correlation Rule Logic
+For automated alerting within the Elastic Security engine, use this correlation configuration:
+
+- **Rule Type:** Threshold / Correlation
+- **Index Pattern:** `logs-*`
+- **Correlation Query:**
+  ```kql
+  event.category : "authentication" and event.outcome : "failure" and network.protocol : "ssh"
+  ```
+- **Threshold Limit:** `> 5` unique occurrences.
+- **Aggregation Grouping:** `source.ip`
+- **Monitoring Timeframe:** `1 minute`\n

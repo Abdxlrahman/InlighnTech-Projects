@@ -1,0 +1,16 @@
+{
+  "attributes": {
+    "title": "SOC Threat Detection - System Ingestion & Alerts",
+    "description": "Operational dashboard visualizing security authentication events, failed logins, source IPs, and SSH service health status.",
+    "panelsJSON": "[{\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":6,\"i\":\"1\"},\"version\":\"8.19.17\",\"panelIndex\":\"1\",\"type\":\"lens\",\"embeddableConfig\":{\"title\":\"Failed Login Trends Over Time\"}},{\"gridData\":{\"x\":0,\"y\":6,\"w\":12,\"h\":6,\"i\":\"2\"},\"version\":\"8.19.17\",\"panelIndex\":\"2\",\"type\":\"lens\",\"embeddableConfig\":{\"title\":\"Top Attacking Source IPs\"}},{\"gridData\":{\"x\":12,\"y\":6,\"w\":12,\"h\":6,\"i\":\"3\"},\"version\":\"8.19.17\",\"panelIndex\":\"3\",\"type\":\"lens\",\"embeddableConfig\":{\"title\":\"Failed vs Successful SSH Sessions\"}}]",
+    "optionsJSON": "{\"useMargins\":true,\"hidePanelTitles\":false}",
+    "timeRestore": true,
+    "timeRange": {
+      "to": "now",
+      "from": "now-15m"
+    }
+  },
+  "coreMigrationVersion": "8.19.17",
+  "id": "dashboard-soc-threat-monitoring-01",
+  "type": "dashboard"
+}\n

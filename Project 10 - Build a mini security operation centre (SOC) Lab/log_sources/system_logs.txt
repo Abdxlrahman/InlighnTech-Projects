@@ -1,0 +1,35 @@
+# Linux Security Log Telemetry
+**Standard: RFC 5424 (The Syslog Protocol) & Common Event Format (CEF)**
+
+This document details the log structure parsed by the threat detection system during the incident investigation.
+
+---
+
+## 1. Authentication Log Architecture (`/var/log/auth.log`)
+The `/var/log/auth.log` file captures all identity and access events on Ubuntu. This file is parsed in real-time by the Elastic Agent.
+
+### 1.1 Brute-Force Attack Signature
+During a brute-force attack (simulated via Hydra), the syslog captures multiple rapid failed passwords for invalid or existing users:
+
+```text
+Jun 30 13:17:10 SOC-SIEM-Server-3 sshd[7532]: Invalid user guest1 from 10.0.2.15 port 49102 ssh2
+Jun 30 13:17:10 SOC-SIEM-Server-3 sshd[7532]: Failed password for invalid user guest1 from 10.0.2.15 port 49102 ssh2
+Jun 30 13:17:11 SOC-SIEM-Server-3 sshd[7534]: Failed password for soc-admin from 10.0.2.15 port 49104 ssh2
+Jun 30 13:17:11 SOC-SIEM-Server-3 sshd[7536]: Failed password for root from 10.0.2.15 port 49106 ssh2
+Jun 30 13:17:12 SOC-SIEM-Server-3 sshd[7538]: Failed password for admin from 10.0.2.15 port 49108 ssh2
+```
+
+### 1.2 Indicators of Automated Bruteforcing
+- **Velocity:** Multiple log lines generated per second (e.g., 4 attempts/sec).
+- **Sequential Port Allocation:** Port numbers increment sequentially (e.g., `49102`, `49104`, `49106`), indicating separate socket connections initiated by an automated tool.
+- **Source IP Coherence:** A single IP (`10.0.2.15`) attempting multiple usernames in a brief timeframe.
+
+---
+
+## 2. Successful Login Evidence
+A successful login appears in the logs as:
+```text
+Jun 30 13:20:05 SOC-SIEM-Server-3 sshd[7601]: Accepted password for soc-admin from 10.0.2.15 port 49180 ssh2
+Jun 30 13:20:05 SOC-SIEM-Server-3 sshd[7601]: pam_unix(sshd:session): session opened for user soc-admin by (uid=0)
+```
+*Note: A primary detection objective is checking whether a series of failed logins is immediately followed by an `Accepted` message from the same source IP, indicating a successful account compromise.*\n
