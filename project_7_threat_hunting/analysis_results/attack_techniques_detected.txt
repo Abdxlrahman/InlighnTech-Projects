@@ -1,0 +1,20 @@
+Analysis of system logs (system_logs.txt) revealed the following suspicious activities:
+
+1. Multiple Failed Logins:
+   - Several failed SSH login attempts for user 'root' from IP 192.168.1.100 in a short timeframe.
+   - Indicates a potential Brute Force attack.
+
+2. Successful Suspicious Login:
+   - Followed by a successful login for user 'admin' from the same IP (192.168.1.100).
+
+3. Malicious File Download:
+   - The 'admin' user executed a sudo command to download a file named 'payload.sh' from a suspicious external domain (http://malicious-server.xyz) using wget.
+
+4. Execution of Unknown Script:
+   - The downloaded script '/tmp/payload.sh' was executed with root privileges via bash.
+
+5. Persistence Mechanism:
+   - A cron job was created to execute '/tmp/payload.sh' periodically, ensuring persistence on the system.
+
+6. Suspicious Network Connection (C2):
+   - Outbound connection attempt blocked by iptables to port 4444, which is commonly used by reverse shells (Command and Control).

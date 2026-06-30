@@ -1,0 +1,2 @@
+# Python standard libraries are sufficient for the automated log analysis script.
+# No external dependencies required.

