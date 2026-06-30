@@ -1,0 +1,111 @@
+================================================================================
+              INLIGHNTECH CYBERSECURITY DIVISION — BLUE TEAM
+                     THREAT INTELLIGENCE & IOC REGISTRY
+================================================================================
+Document Ref:  IT-BC-P4-IOC-2026-001
+Project Name:  Network Traffic Analysis & Threat Detection using Wireshark
+Engagement:    Threat Monitoring Baseline Audit
+Analyst:       Cybersecurity Intern (Blue Team)
+Date:          June 15, 2026
+Status:        APPROVED / ARCHIVED
+================================================================================
+
+This document functions as the Indicators of Compromise (IOC) Registry and 
+Reputation Lookup report. It catalogs and evaluates all external IP addresses 
+discovered by the low-level custom PCAP parsing tool and Wireshark filters 
+during the active monitoring session.
+
+---
+
+### SECTION 1: SYSTEM & CAPTURE LOG METADATA
+
+- Target File:             traffic_capture.pcapng
+- Total Packets Processed: 4,307 Packets
+- Unique External IPv4s:   16 Hosts
+- Unique External IPv6s:   4 Hosts
+- Active Local Host IP:    192.168.1.21 (IPv4) / 2401:4900:889d:471:886a:4973:21b9:b319 (IPv6)
+- Local Host MAC:          10:5f:ad:ad:3e:cd (Intel AX211)
+
+---
+
+### SECTION 2: INDICATOR OF COMPROMISE (IOC) REGISTRY
+
+Below is the structured analysis of all external IP communication endpoints:
+
+--------------------------------------------------------------------------------
+[IOC-01] IP Address: 184.28.23.154
+--------------------------------------------------------------------------------
+- Associated FQDN:      example.com
+- Communication Ports:  80 / TCP (HTTP Plaintext Session)
+- WHOIS Registrant:     Akamai Technologies, Inc. (AS16625)
+- OSINT Threat Score:   0 / 94 Detections (VirusTotal / AbuseIPDB)
+- Severity Level:       INFO / LOW (Cleartext Transmission Risk Only)
+- CVSS v3.1 Vector:     CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N (Base Score: 3.5)
+- Business Impact:      No active compromise. Exposure of standard test page data.
+- Mitigation Action:    Enforce TLS version 1.3 across local systems. Block outbound HTTP Port 80 
+                        non-secure requests via local host firewall policy.
+
+--------------------------------------------------------------------------------
+[IOC-02] IP Address: 172.66.147.243
+--------------------------------------------------------------------------------
+- Associated FQDN:      example.com (Cloudflare CDN Anycast Node)
+- Communication Ports:  80 / TCP (HTTP Plaintext Session)
+- WHOIS Registrant:     Cloudflare, Inc. (AS13335)
+- OSINT Threat Score:   0 / 94 Detections (Clean)
+- Severity Level:       INFO / LOW
+- CVSS v3.1 Vector:     CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N (Base Score: 3.5)
+- Business Impact:      Plaintext HTTP response containing static HTML payload.
+- Mitigation Action:    Implement HTTP-to-HTTPS redirection and secure transport enforcement.
+
+--------------------------------------------------------------------------------
+[IOC-03] IP Address: 23.59.188.130
+--------------------------------------------------------------------------------
+- Associated FQDN:      r1.crl / gsr1.crl (DigiCert Certificate Revocation List)
+- Communication Ports:  80 / TCP (HTTP Unencrypted Retrieval)
+- WHOIS Registrant:     Akamai Technologies, Inc. (AS16625) / DigiCert, Inc.
+- OSINT Threat Score:   0 / 94 Detections (Clean)
+- Severity Level:       LOW
+- CVSS v3.1 Vector:     CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N (Base Score: 5.3)
+- Business Impact:      Background OS check. Certificate status information is public, 
+                        so plaintext retrieval does not violate privacy bounds but 
+                        remains open to MitM redirection/spoofing risks.
+- Mitigation Action:    Configure local browsers and system trust stores to utilize 
+                        OCSP (Online Certificate Status Protocol) stapling or secure 
+                        CRL distribution methods where supported.
+
+--------------------------------------------------------------------------------
+[IOC-04] IP Address: 13.107.42.254
+--------------------------------------------------------------------------------
+- Associated FQDN:      edge.microsoft.com / storeedgefd.dsx.mp.microsoft.com
+- Communication Ports:  443 / TCP (TLS Encrypted Application Data)
+- WHOIS Registrant:     Microsoft Corporation (AS8075)
+- OSINT Threat Score:   0 / 94 Detections (Clean)
+- Severity Level:       NONE (Authorized System Service)
+- CVSS v3.1 Vector:     N/A
+- Business Impact:      Authorized background synchronization of Microsoft Edge components.
+- Mitigation Action:    No action required. Communication is encrypted and authenticated.
+
+--------------------------------------------------------------------------------
+[IOC-05] IP Address: 52.105.46.39
+--------------------------------------------------------------------------------
+- Associated FQDN:      nav-edge.smartscreen.microsoft.com
+- Communication Ports:  443 / TCP (TLS Encrypted Windows SmartScreen Telemetry)
+- WHOIS Registrant:     Microsoft Corporation (AS8075)
+- OSINT Threat Score:   0 / 94 Detections (Clean)
+- Severity Level:       NONE (Authorized Security Service)
+- CVSS v3.1 Vector:     N/A
+- Business Impact:      Normal execution of SmartScreen URL and application reputation checks.
+- Mitigation Action:    No action required. Vital endpoint security feature for host.
+
+---
+
+### SECTION 3: SYSTEM HYGIENE VERIFICATION SUMMARY
+
+[✓] NO Malware Command & Control (C2) domains resolved.
+[✓] NO Known malicious IP blocks or dynamic DGAs found.
+[✓] NO ARP duplicate IP-to-MAC assignments identified (No active Spoofing/MITM).
+[✓] All unencrypted sessions are restricted to public assets (CRLs, example.com).
+
+================================================================================
+                    [END OF THREAT INTELLIGENCE REGISTER]
+================================================================================

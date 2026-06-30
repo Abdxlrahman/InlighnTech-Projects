@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Network Traffic Audit & Threat Detection Report — InlighnTech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:        #0a0f1e;
+    --navy-mid:    #0d1b2e;
+    --blue-deep:   #0e3460;
+    --blue:        #1a56a0;
+    --blue-light:  #2d7dd2;
+    --cyan:        #00b4d8;
+    --cyan-light:  #90e0ef;
+    --silver:      #e8edf5;
+    --text:        #1e293b;
+    --text-muted:  #64748b;
+    --border:      #dde4ef;
+    --white:       #ffffff;
+    --green:       #16a34a;
+    --amber:       #d97706;
+    --red:         #dc2626;
+    --surface:     #f4f7fb;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #e9edf5;
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  /* ═══════════════ COVER PAGE ═══════════════ */
+  .cover {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 20px;
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .cover-top-bar {
+    background: var(--blue-deep);
+    padding: 18px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--cyan);
+  }
+
+  .cover-top-bar .org-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cyan-light);
+  }
+
+  .cover-top-bar .doc-id {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .cover-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(45,125,210,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45,125,210,0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .cover-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,180,216,0.12) 0%, transparent 70%);
+    top: 30%;
+    right: -150px;
+    pointer-events: none;
+  }
+
+  .cover-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 70px 60px 50px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cover-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 28px;
+  }
+  .cover-label::before {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 2px;
+    background: var(--cyan);
+  }
+
+  .cover h1 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  .cover h1 span {
+    color: var(--cyan);
+  }
+
+  .cover-subtitle {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+    margin-bottom: 50px;
+    max-width: 420px;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--cyan), transparent);
+    margin-bottom: 40px;
+  }
+
+  .cover-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 50px;
+    margin-bottom: 50px;
+  }
+
+  .cover-meta-item .label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    margin-bottom: 4px;
+  }
+
+  .cover-meta-item .value {
+    font-size: 13px;
+    color: rgba(255,255,255,0.88);
+    font-weight: 500;
+  }
+
+  .cover-classification {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 30px;
+    padding: 8px 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .cover-footer {
+    padding: 20px 60px;
+    background: rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+    z-index: 2;
+  }
+
+  .cover-footer .left {
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .cover-footer .right {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ═══════════════ MAIN DOCUMENT ═══════════════ */
+  .document {
+    width: 210mm;
+    margin: 0 auto;
+    background: var(--white);
+  }
+
+  .doc-header {
+    background: var(--navy-mid);
+    padding: 16px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--cyan);
+  }
+
+  .doc-header .left-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--blue-light), var(--cyan));
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 900;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .brand-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .brand-sub {
+    font-size: 9px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .doc-header .right-info {
+    text-align: right;
+  }
+
+  .doc-header .right-info .title-sm {
+    font-size: 11px;
+    color: var(--cyan-light);
+    font-weight: 600;
+  }
+
+  .doc-header .right-info .date-sm {
+    font-size: 9px;
+    color: rgba(255,255,255,0.35);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .page-content {
+    padding: 45px 60px;
+  }
+
+  .toc-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+  }
+
+  .toc-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--blue);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toc-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    background: var(--blue);
+    border-radius: 2px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .toc-item:last-child { border-bottom: none; }
+
+  .toc-item .toc-num {
+    font-weight: 600;
+    color: var(--blue);
+    margin-right: 10px;
+    font-size: 12px;
+  }
+
+  .toc-item .toc-dots {
+    flex: 1;
+    border-bottom: 1px dotted #cbd5e1;
+    margin: 0 10px;
+    position: relative;
+    top: -4px;
+  }
+
+  .toc-item .toc-pg {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .section-heading:first-of-type { margin-top: 0; }
+
+  .section-num {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-light));
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-title-text h2 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+
+  .section-title-text span {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .exec-summary {
+    background: linear-gradient(135deg, #eef5ff, #f0f9ff);
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid var(--blue);
+    border-radius: 10px;
+    padding: 22px 26px;
+    font-size: 13.5px;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .meta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+
+  .meta-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+  }
+
+  .meta-table td:first-child {
+    background: var(--surface);
+    font-weight: 600;
+    color: var(--navy);
+    width: 32%;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .stat-card.blue::before  { background: var(--blue-light); }
+  .stat-card.cyan::before  { background: var(--cyan); }
+  .stat-card.green::before { background: var(--green); }
+  .stat-card.amber::before { background: var(--amber); }
+
+  .stat-card .stat-pct {
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-card.blue  .stat-pct { color: var(--blue-light); }
+  .stat-card.cyan  .stat-pct { color: #0891b2; }
+  .stat-card.green .stat-pct { color: var(--green); }
+  .stat-card.amber .stat-pct { color: var(--amber); }
+
+  .stat-card .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .stat-card .stat-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .finding-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  .finding-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    background: var(--navy-mid);
+    color: #fff;
+  }
+
+  .finding-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cyan-light);
+    white-space: nowrap;
+  }
+
+  .finding-title {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .finding-body {
+    padding: 20px 22px;
+    background: var(--white);
+  }
+
+  .filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0d1b2e;
+    color: #7dd3fc;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+  }
+
+  .filter-tag::before {
+    content: '$ ';
+    color: var(--cyan);
+    opacity: 0.7;
+  }
+
+  .finding-row {
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+
+  .finding-row .row-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--blue);
+    margin-bottom: 4px;
+  }
+
+  .assessment-box {
+    background: #fffbeb;
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: #78350f;
+  }
+
+  .assessment-box .assess-label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--amber);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .screenshot-block {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 18px 0;
+    background: var(--surface);
+  }
+
+  .screenshot-topbar {
+    background: #1e2738;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.red    { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green  { background: #28c840; }
+
+  .screenshot-topbar .tab-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    margin-left: 8px;
+  }
+
+  .screenshot-inner {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .screenshot-inner img {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #dde4ef;
+    display: block;
+  }
+
+  .screenshot-caption {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 8px 14px;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .osint-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-bottom: 20px;
+  }
+
+  .osint-table thead tr {
+    background: var(--navy-mid);
+    color: #fff;
+  }
+
+  .osint-table thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .osint-table tbody tr:nth-child(even) { background: var(--surface); }
+  .osint-table tbody tr:hover { background: #eef5ff; }
+
+  .osint-table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .osint-table tbody td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+
+  .badge-clean {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #dcfce7;
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .rec-list { list-style: none; }
+
+  .rec-item {
+    display: flex;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .rec-item:last-child { border-bottom: none; }
+
+  .rec-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .rec-text .rec-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .rec-text .rec-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+
+  .conclusion-box {
+    background: linear-gradient(135deg, var(--navy), var(--blue-deep));
+    border-radius: 12px;
+    padding: 30px 36px;
+    color: #fff;
+    margin-top: 30px;
+  }
+
+  .conclusion-box h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--cyan-light);
+    margin-bottom: 12px;
+  }
+
+  .conclusion-box p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.75;
+  }
+
+  .doc-footer {
+    background: var(--navy-mid);
+    border-top: 2px solid var(--blue-deep);
+    padding: 14px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .doc-footer .left {
+    font-size: 9px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .doc-footer .center {
+    font-size: 9px;
+    color: rgba(255,255,255,0.25);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .doc-footer .right {
+    font-size: 9px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  p { font-size: 13.5px; margin-bottom: 14px; }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--blue-deep);
+  }
+  ul { margin-left: 18px; margin-bottom: 16px; }
+  li { font-size: 13.5px; margin-bottom: 6px; }
+  strong { color: var(--navy); }
+
+  .section-sep {
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+    margin: 34px 0;
+  }
+
+  .terminal-box {
+    background: #0f172a;
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: #38bdf8;
+    margin: 18px 0;
+    overflow-x: auto;
+    border: 1px solid #334155;
+  }
+
+  .terminal-box .cmd {
+    color: #f1f5f9;
+    font-weight: 500;
+  }
+  .terminal-box .cmd::before {
+    content: "C:\\> ";
+    color: #64748b;
+  }
+  .terminal-box .output-line {
+    color: #94a3b8;
+    margin-top: 4px;
+    white-space: pre-wrap;
+  }
+
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    .cover { margin-bottom: 0; page-break-after: always; width: 100%; min-height: 100vh; }
+    .document { width: 100%; }
+    .page-break { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║         COVER PAGE           ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<div class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-glow"></div>
+
+  <div class="cover-top-bar">
+    <span class="org-tag">InlighnTech · Defensive Cybersecurity</span>
+    <span class="doc-id">REF: IT-SEC-BC-P4-2026-001</span>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-label">Blue Team · Project 4</div>
+
+    <h1>Network Traffic<br>Audit &<br><span>Threat Detection</span></h1>
+
+    <p class="cover-subtitle">
+      Packet-level network inspection using Wireshark — Protocol mapping, threat indicator detection, and OSINT intelligence verification.
+    </p>
+
+    <div class="cover-divider"></div>
+
+    <div class="cover-meta-grid">
+      <div class="cover-meta-item">
+        <div class="label">Analyst</div>
+        <div class="value">Blue Team Cybersecurity Intern</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Report Date</div>
+        <div class="value">June 15, 2026</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Platform</div>
+        <div class="value">Windows 11 (Samsung Book 4)</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Analysis Tool</div>
+        <div class="value">Wireshark 4.6.6 + Npcap</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Total Packets Analyzed</div>
+        <div class="value">4,307 Packets</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Threats Identified</div>
+        <div class="value">0 Active Threats Detected</div>
+      </div>
+    </div>
+
+    <div class="cover-classification">🔒 &nbsp; Confidential — Internal Use Only</div>
+  </div>
+
+  <div class="cover-footer">
+    <span class="left">InlighnTech Cybersecurity Division — Blue Team Training Program</span>
+    <span class="right">© 2026 InlighnTech. All Rights Reserved.</span>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║        MAIN DOCUMENT         ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<div class="document">
+
+  <!-- Top header bar -->
+  <div class="doc-header">
+    <div class="left-brand">
+      <div class="brand-icon">IT</div>
+      <div>
+        <div class="brand-name">InlighnTech</div>
+        <div class="brand-sub">Defensive Cybersecurity Division</div>
+      </div>
+    </div>
+    <div class="right-info">
+      <div class="title-sm">Network Traffic Analysis Report</div>
+      <div class="date-sm">June 15, 2026 &nbsp;·&nbsp; REF: IT-SEC-BC-P4-2026-001</div>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- ─ Table of Contents ─ -->
+    <div class="toc-container">
+      <div class="toc-title">Table of Contents</div>
+      <div class="toc-item"><span><span class="toc-num">00.</span> Project Objective</span><span class="toc-dots"></span><span class="toc-pg">1</span></div>
+      <div class="toc-item"><span><span class="toc-num">01.</span> Executive Summary</span><span class="toc-dots"></span><span class="toc-pg">1</span></div>
+      <div class="toc-item"><span><span class="toc-num">02.</span> Methodology & Lab Environment</span><span class="toc-dots"></span><span class="toc-pg">2</span></div>
+      <div class="toc-item"><span><span class="toc-num">03.</span> Protocol Distribution Analysis</span><span class="toc-dots"></span><span class="toc-pg">2</span></div>
+      <div class="toc-item"><span><span class="toc-num">04.</span> Analysis & Findings</span><span class="toc-dots"></span><span class="toc-pg">3</span></div>
+      <div class="toc-item"><span><span class="toc-num">05.</span> OSINT Reputation Lookups</span><span class="toc-dots"></span><span class="toc-pg">4</span></div>
+      <div class="toc-item"><span><span class="toc-num">06.</span> Security Recommendations</span><span class="toc-dots"></span><span class="toc-pg">5</span></div>
+      <div class="toc-item"><span><span class="toc-num">07.</span> Custom Python Analyzer Tool</span><span class="toc-dots"></span><span class="toc-pg">5</span></div>
+      <div class="toc-item"><span><span class="toc-num">08.</span> Network Communication Topology</span><span class="toc-dots"></span><span class="toc-pg">6</span></div>
+      <div class="toc-item"><span><span class="toc-num">09.</span> Limitations & Future Scope</span><span class="toc-dots"></span><span class="toc-pg">6</span></div>
+      <div class="toc-item"><span><span class="toc-num">10.</span> MITRE ATT&amp;CK Mapping & Learning Outcomes</span><span class="toc-dots"></span><span class="toc-pg">7</span></div>
+      <div class="toc-item"><span><span class="toc-num">11.</span> Conclusion</span><span class="toc-dots"></span><span class="toc-pg">7</span></div>
+    </div>
+
+    <!-- ─ 00. Project Objective ─ -->
+    <div class="section-heading">
+      <div class="section-num">0</div>
+      <div class="section-title-text">
+        <span>Scope & Purpose</span>
+        <h2>Project Objective</h2>
+      </div>
+    </div>
+
+    <p>The objective of this project is to simulate the workflows of a Security Operations Center (SOC) analyst by capturing, inspecting, and analyzing live network traffic using Wireshark. This investigation aims to identify active network protocols, detect unencrypted transmission of sensitive data, audit DNS resolutions, verify local network resolution (ARP) integrity, and cross-reference external IP addresses with threat intelligence resources to assess the overall security posture of the host system.</p>
+
+    <table class="meta-table">
+      <tr><td>Engagement Type</td><td>Blue Team — Network Traffic Analysis</td></tr>
+      <tr><td>Environment</td><td>Windows 11 Host — Wi-Fi (Intel AX211) Interface</td></tr>
+      <tr><td>Scope</td><td>Live traffic capture and protocol-level analysis on a controlled local network</td></tr>
+      <tr><td>Duration</td><td>~3 Minutes of active packet capture</td></tr>
+      <tr><td>Classification</td><td>Confidential — Internal Training Project</td></tr>
+    </table>
+
+    <div class="section-sep"></div>
+
+    <!-- ─ 01. Executive Summary ─ -->
+    <div class="section-heading">
+      <div class="section-num">1</div>
+      <div class="section-title-text">
+        <span>High-Level Overview</span>
+        <h2>Executive Summary</h2>
+      </div>
+    </div>
+
+    <div class="exec-summary">
+      This report documents a structured packet-level analysis investigation conducted on a Windows 11 host on June 15, 2026. Using Wireshark v4.6.6 with the Npcap capture driver, a total of <strong>4,307 packets</strong> were captured and analyzed across a 3-minute monitoring window. The investigation aimed to identify protocol distribution, detect unencrypted HTTP transmission, audit DNS query behavior, and verify ARP local network integrity. All external IP addresses encountered were verified against Open Source Intelligence (OSINT) databases. <strong>No active threats, malicious indicators, or anomalous behaviors were detected</strong> during the monitored session.
+    </div>
+
+    <div class="section-sep"></div>
+
+    <!-- ─ 02. Methodology ─ -->
+    <div class="section-heading">
+      <div class="section-num">2</div>
+      <div class="section-title-text">
+        <span>Tools & Process</span>
+        <h2>Methodology & Lab Environment</h2>
+      </div>
+    </div>
+
+    <table class="meta-table">
+      <tr><td>Capture Interface</td><td>Intel Wi-Fi 6E AX211 (Wi-Fi Adapter)</td></tr>
+      <tr><td>Capture Engine</td><td>Wireshark v4.6.6 with Npcap Packet Driver</td></tr>
+      <tr><td>Host OS</td><td>Windows 11 — Samsung Galaxy Book 4</td></tr>
+      <tr><td>OSINT Tools</td><td>VirusTotal, WHOIS, AbuseIPDB</td></tr>
+      <tr><td>Filter Queries Used</td><td><code>http</code>, <code>dns</code>, <code>arp</code>, <code>tcp</code></td></tr>
+    </table>
+
+    <p><strong>Analysis Methodology:</strong></p>
+    <ul>
+      <li>Initiated a live capture session on the active Wi-Fi interface and generated representative traffic by accessing <code>http://example.com</code>.</li>
+      <li>Applied protocol-specific display filters to isolate HTTP, DNS, and ARP packets for targeted inspection.</li>
+      <li>Generated a Protocol Hierarchy summary (Statistics → Protocol Hierarchy) to map the full traffic distribution.</li>
+      <li>Identified external IP addresses and performed OSINT reputation lookups to verify their legitimacy.</li>
+    </ul>
+
+    <div class="screenshot-block no-break">
+      <div class="screenshot-topbar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="tab-name">Wireshark 4.6.6 — Capture Interface Selection</span>
+      </div>
+      <div class="screenshot-inner">
+        <img src="../screenshots/wireshark_startup.png" alt="Wireshark Startup Interface"/>
+      </div>
+      <div class="screenshot-caption">Figure 0 — Wireshark 4.6.6 startup window displaying all available capture interfaces on the host system.</div>
+    </div>
+
+    <div class="section-sep page-break"></div>
+
+    <!-- ─ 03. Protocol Distribution ─ -->
+    <div class="section-heading">
+      <div class="section-num">3</div>
+      <div class="section-title-text">
+        <span>Traffic Breakdown</span>
+        <h2>Protocol Distribution Analysis</h2>
+      </div>
+    </div>
+
+    <p>Analysis of the complete capture session (4,307 total packets) via the <strong>Statistics → Protocol Hierarchy</strong> window revealed the following traffic composition:</p>
+
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-pct">81.8%</div>
+        <div class="stat-label">IPv6</div>
+        <div class="stat-sub">3,522 packets</div>
+      </div>
+      <div class="stat-card cyan">
+        <div class="stat-pct">70.4%</div>
+        <div class="stat-label">TCP</div>
+        <div class="stat-sub">3,031 packets</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-pct">89.7%</div>
+        <div class="stat-label">TLS/HTTPS</div>
+        <div class="stat-sub">of total bytes</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-pct">0.7%</div>
+        <div class="stat-label">ARP</div>
+        <div class="stat-sub">32 packets</div>
+      </div>
+    </div>
+
+    <ul>
+      <li><strong>IPv6 Dominance (81.8% of packets):</strong> Modern Windows 11 systems prefer IPv6 for most communications, which explains the high proportion of IPv6 traffic.</li>
+      <li><strong>TLS Payload Coverage (89.7% of total bytes):</strong> The vast majority of application-layer data is securely encrypted, indicating a healthy HTTPS-first browsing posture.</li>
+      <li><strong>ARP Volume (0.7%):</strong> A low and expected volume of local address resolution traffic confirms no unusual broadcast storms or ARP flooding behavior.</li>
+    </ul>
+
+    <div class="screenshot-block no-break">
+      <div class="screenshot-topbar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <span class="tab-name">Wireshark — Statistics → Protocol Hierarchy</span>
+      </div>
+      <div class="screenshot-inner">
+        <img src="../screenshots/protocol_hierarchy.png" alt="Protocol Hierarchy Statistics"/>
+      </div>
+      <div class="screenshot-caption">Figure 1 — Protocol Hierarchy statistics window showing the full traffic distribution across all captured packets.</div>
+    </div>
+
+    <div class="section-sep page-break"></div>
+
+    <!-- ─ 04. Findings ─ -->
+    <div class="section-heading">
+      <div class="section-num">4</div>
+      <div class="section-title-text">
+        <span>Threat Indicators & Packet-Level Inspection</span>
+        <h2>Analysis & Findings</h2>
+      </div>
+    </div>
+
+    <!-- Finding A -->
+    <div class="finding-card no-break">
+      <div class="finding-header">
+        <span class="finding-badge">Finding A</span>
+        <span class="finding-title">Unencrypted HTTP Data Transmission</span>
+      </div>
+      <div class="finding-body">
+        <div class="filter-tag">display filter: http</div>
+
+        <div class="finding-row">
+          <div class="row-label">Observation</div>
+          <p>Unencrypted GET requests were captured for Certificate Revocation List files (<code>/r/r1.crl</code> and <code>/r/gsr1.crl</code>) alongside cleartext HTTP payloads from the test endpoint <code>http://example.com</code>. The server responded with a <code>200 OK</code> status code, delivering the webpage content in plain, unencrypted form over TCP Port 80.</p>
+        </div>
+
+        <div class="assessment-box">
+          <div class="assess-label">⚠ Security Threat Assessment (CVSS v3.1 Severity Rating: LOW [3.5])</div>
+          <strong>CVSS Vector:</strong> <code>CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N</code><br>
+          Transmitting web data via HTTP (Port 80) exposes the network to packet sniffing and session interception. While CRL distribution endpoints are inherently public, any user credentials or personal data submitted on HTTP-based pages can be intercepted and read in plain text by an attacker positioned on the same network (Man-in-the-Middle).
+        </div>
+
+        <div class="screenshot-block">
+          <div class="screenshot-topbar">
+            <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+            <span class="tab-name">Filter: http — Packet List View</span>
+          </div>
+          <div class="screenshot-inner">
+            <img src="../screenshots/http_analysis.png" alt="HTTP Packet Analysis"/>
+          </div>
+          <div class="screenshot-caption">Figure 2 — Plaintext HTTP GET requests and server responses captured on TCP Port 80.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Finding B -->
+    <div class="finding-card no-break">
+      <div class="finding-header">
+        <span class="finding-badge">Finding B</span>
+        <span class="finding-title">DNS Query Audit & Exfiltration Check</span>
+      </div>
+      <div class="finding-body">
+        <div class="filter-tag">display filter: dns</div>
+
+        <div class="finding-row">
+          <div class="row-label">Observation</div>
+          <p>A total of <strong>90 DNS packets</strong> were captured, representing <strong>2.0%</strong> of total traffic. The system issued standard A/AAAA queries for <code>example.com</code> and received resolutions to <code>184.28.23.154</code> (Akamai CDN) and <code>172.66.147.243</code> (Cloudflare CDN). Background Windows telemetry queries for <code>www.bing.com</code> and Microsoft services were also observed.</p>
+        </div>
+
+        <div class="assessment-box">
+          <div class="assess-label">✓ Security Threat Assessment — No Threat Detected</div>
+          No high-entropy subdomain structures consistent with Domain Generation Algorithm (DGA) activity were identified. There was no evidence of DNS tunneling, covert data exfiltration through DNS payloads, or beaconing to known malicious name servers. All DNS destinations were verified as legitimate resolvers.
+        </div>
+
+        <div class="screenshot-block">
+          <div class="screenshot-topbar">
+            <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+            <span class="tab-name">Filter: dns — Domain Query List</span>
+          </div>
+          <div class="screenshot-inner">
+            <img src="../screenshots/dns_analysis.png" alt="DNS Analysis"/>
+          </div>
+          <div class="screenshot-caption">Figure 3 — DNS standard query and response packets mapping domain names to their external IP addresses.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Finding C -->
+    <div class="finding-card no-break">
+      <div class="finding-header">
+        <span class="finding-badge">Finding C</span>
+        <span class="finding-title">ARP Local Network Integrity Verification</span>
+      </div>
+      <div class="finding-body">
+        <div class="filter-tag">display filter: arp</div>
+
+        <div class="finding-row">
+          <div class="row-label">Observation</div>
+          <p>ARP broadcast requests of the form <code>Who has 192.168.1.6? Tell 192.168.1.17</code> were observed, representing standard local-link address resolution behavior. Each ARP request was answered by a unique, non-conflicting MAC address response, confirming stable local network address assignments.</p>
+        </div>
+
+        <div class="assessment-box">
+          <div class="assess-label">✓ Security Threat Assessment — No Threat Detected</div>
+          No duplicate IP-to-MAC address mappings were identified during the capture window. The absence of duplicate ARP replies from differing MAC addresses rules out active Man-in-the-Middle (MITM) attacks, ARP cache poisoning, or ARP spoofing activity targeting local hosts on the subnet.
+        </div>
+
+        <div class="screenshot-block">
+          <div class="screenshot-topbar">
+            <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+            <span class="tab-name">Filter: arp — Local Address Resolution Broadcasts</span>
+          </div>
+          <div class="screenshot-inner">
+            <img src="../screenshots/arp_analysis.png" alt="ARP Analysis"/>
+          </div>
+          <div class="screenshot-caption">Figure 4 — ARP broadcast requests confirming healthy, non-conflicting local network address resolution.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-sep page-break"></div>
+
+    <!-- ─ 05. OSINT Lookups ─ -->
+    <div class="section-heading">
+      <div class="section-num">5</div>
+      <div class="section-title-text">
+        <span>Threat Intelligence Verification</span>
+        <h2>OSINT Reputation Lookups</h2>
+      </div>
+    </div>
+
+    <p>All external IP addresses identified during the capture session were cross-referenced against leading threat intelligence platforms to verify their reputation and ownership:</p>
+
+    <table class="osint-table">
+      <thead>
+        <tr>
+          <th>IP Address</th>
+          <th>Domain / Hostname</th>
+          <th>WHOIS Owner</th>
+          <th>VirusTotal Score</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>184.28.23.154</td>
+          <td>example.com</td>
+          <td>Akamai Technologies, Inc.</td>
+          <td>0 / 94</td>
+          <td><span class="badge-clean">✓ Clean</span></td>
+        </tr>
+        <tr>
+          <td>172.66.147.243</td>
+          <td>example.com (CDN Alt.)</td>
+          <td>Cloudflare, Inc.</td>
+          <td>0 / 94</td>
+          <td><span class="badge-clean">✓ Clean</span></td>
+        </tr>
+        <tr>
+          <td>23.59.188.130</td>
+          <td>r1.crl / gsr1.crl</td>
+          <td>Akamai / DigiCert</td>
+          <td>0 / 94</td>
+          <td><span class="badge-clean">✓ Clean</span></td>
+        </tr>
+        <tr>
+          <td>13.107.42.254</td>
+          <td>edge.microsoft.com</td>
+          <td>Microsoft Corporation</td>
+          <td>0 / 94</td>
+          <td><span class="badge-clean">✓ Clean</span></td>
+        </tr>
+        <tr>
+          <td>52.105.46.39</td>
+          <td>nav-edge.smartscreen.microsoft.com</td>
+          <td>Microsoft Corporation</td>
+          <td>0 / 94</td>
+          <td><span class="badge-clean">✓ Clean</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>All IP addresses contacted during the capture session were verified as legitimate, globally trusted infrastructure providers. No threat actor-associated IPs, Command-and-Control (C2) server indicators, or entries on threat blocklists were identified.</p>
+
+    <div class="section-sep"></div>
+
+    <!-- ─ 06. Recommendations ─ -->
+    <div class="section-heading">
+      <div class="section-num">6</div>
+      <div class="section-title-text">
+        <span>Defensive Action Items</span>
+        <h2>Security Recommendations</h2>
+      </div>
+    </div>
+
+    <ul class="rec-list">
+      <div class="rec-item">
+        <div class="rec-icon" style="background:#eff6ff;">🔒</div>
+        <div class="rec-text">
+          <div class="rec-title">Enforce Universal HTTPS (HSTS Policy) — NIST CSF: PR.DS-1</div>
+          <div class="rec-desc">Mandate HTTPS-only connections by implementing HTTP Strict Transport Security (HSTS) headers across all internal systems and web-facing assets. This eliminates the risk of credential theft via unencrypted HTTP sessions and prevents SSL-strip downgrade attacks.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-icon" style="background:#f0fdf4;">🌐</div>
+        <div class="rec-text">
+          <div class="rec-title">Implement DNS over HTTPS (DoH) or DNS over TLS (DoT) — NIST CSF: PR.DS-5</div>
+          <div class="rec-desc">Configure secure DNS resolution protocols (DoH/DoT) on all endpoints to prevent local network eavesdroppers from inspecting or manipulating DNS queries. Recommended providers include Cloudflare (1.1.1.1) and Google (8.8.8.8) with TLS support.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-icon" style="background:#fffbeb;">🛡️</div>
+        <div class="rec-text">
+          <div class="rec-title">Enable Dynamic ARP Inspection (DAI) — NIST CSF: PR.PT-4</div>
+          <div class="rec-desc">Configure Dynamic ARP Inspection on managed network switches to validate ARP packets against a trusted DHCP binding table. This prevents ARP spoofing and MITM attacks by rejecting unauthorized ARP replies that do not match known IP-to-MAC mappings.</div>
+        </div>
+      </div>
+    </ul>
+
+    <div class="section-sep"></div>
+
+    <!-- ─ 07. Custom Python PCAP Parser Tool ─ -->
+    <div class="section-heading">
+      <div class="section-num">7</div>
+      <div class="section-title-text">
+        <span>Development & Automation</span>
+        <h2>Custom Python PCAP Parser Tool</h2>
+      </div>
+    </div>
+
+    <p>A native Python parser utility (<code>scripts/pcap_analyzer.py</code>) was developed to parse low-level PCAP and PCAPNG file structures directly using the <code>struct</code> library. This verifies analysis automation without external package dependencies.</p>
+
+    <div class="terminal-box">
+      <span class="cmd">python scripts/pcap_analyzer.py packet_captures/traffic_capture.pcapng</span>
+      <div class="output-line">[00:36:45] INFO - Opening network capture file: traffic_capture.pcapng
+[00:36:45] INFO - Format detected: PCAP Next Generation (PCAPNG)
+============================================================
+         INLIGHNTECH NETWORK TRAFFIC ANALYSIS REPORT
+============================================================
+Target PCAP File:     traffic_capture.pcapng
+Total Packets Read:   4307
+IPv4 Packets:         729
+IPv6 Packets:         1465
+TCP Conversations:    1830
+UDP Conversations:    342
+------------------------------------------------------------
+[*] OSINT Target IP Discoveries:
+  [+] External Host Connected: 184.28.23.154
+  [+] External Host Connected: 172.66.147.243
+  ...
+[!] Plaintext HTTP (Port 80) Transmissions:
+  [!] HTTP Session Alert from IPv6 to IPv6:
+      Request Path: GET /r/r1.crl HTTP/1.1
+============================================================</div>
+    </div>
+
+    <div class="section-sep"></div>
+
+    <!-- ─ 08. Network Topology ─ -->
+    <div class="section-heading">
+      <div class="section-num">8</div>
+      <div class="section-title-text">
+        <span>Session Communication Map</span>
+        <h2>Network Communication Topology</h2>
+      </div>
+    </div>
+
+    <p>The following table maps the complete communication flow observed during the 3-minute capture window, detailing the local host, network gateway, and all external endpoints contacted:</p>
+
+    <table class="osint-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Host / Node</th>
+          <th>Address</th>
+          <th>Protocol</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>L2</td>
+          <td>Local Host NIC</td>
+          <td>10:5f:ad:ad:3e:cd</td>
+          <td>Ethernet</td>
+          <td>Source MAC (Intel AX211)</td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>Local Host</td>
+          <td>192.168.1.21</td>
+          <td>IPv4</td>
+          <td>Outbound request origin</td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>Local Host</td>
+          <td>2401:4900:889d:471::b319</td>
+          <td>IPv6</td>
+          <td>Preferred stack (SLAAC)</td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>example.com (Akamai)</td>
+          <td>184.28.23.154</td>
+          <td>IPv4/HTTP</td>
+          <td>HTTP test target — Cleartext</td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>example.com (Cloudflare)</td>
+          <td>172.66.147.243</td>
+          <td>IPv6/HTTP</td>
+          <td>Anycast CDN alternate path</td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>DigiCert CRL Server</td>
+          <td>23.59.188.130</td>
+          <td>IPv6/HTTP</td>
+          <td>Certificate Revocation List endpoint</td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>edge.microsoft.com</td>
+          <td>13.107.42.254</td>
+          <td>IPv4/TLS</td>
+          <td>OS background telemetry (encrypted)</td>
+        </tr>
+        <tr>
+          <td>L3</td>
+          <td>SmartScreen Microsoft</td>
+          <td>52.105.46.39</td>
+          <td>IPv4/TLS</td>
+          <td>Host security service (encrypted)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-sep"></div>
+
+    <!-- ─ 09. Limitations ─ -->
+    <div class="section-heading">
+      <div class="section-num">9</div>
+      <div class="section-title-text">
+        <span>Project Boundaries</span>
+        <h2>Limitations &amp; Future Scope</h2>
+      </div>
+    </div>
+
+    <div class="exec-summary" style="border-left-color: var(--amber); background: linear-gradient(135deg,#fffbeb,#fef9c3);">
+      <strong>Scope Note:</strong> This audit was conducted under passive monitoring conditions on a single Windows 11 host for approximately 3 minutes. No active intrusion simulation, adversary emulation, or lateral movement exercises were performed.
+    </div>
+
+    <ul class="rec-list">
+      <div class="rec-item">
+        <div class="rec-icon" style="background:#fef2f2;">⚡</div>
+        <div class="rec-text">
+          <div class="rec-title">Short Capture Window</div>
+          <div class="rec-desc">The 3-minute capture window may not represent full day-cycle network behavior. Future sessions should run for a minimum of 60 minutes across peak usage periods to detect low-and-slow beaconing patterns.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-icon" style="background:#f0fdf4;">🔮</div>
+        <div class="rec-text">
+          <div class="rec-title">Future: Extend Parser with IoC Feed Integration</div>
+          <div class="rec-desc">The custom <code>pcap_analyzer.py</code> can be extended to query live threat feeds (Shodan, AbuseIPDB API, VirusTotal API) in real-time against every discovered external IP, automating the entire OSINT phase.</div>
+        </div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-icon" style="background:#eff6ff;">📊</div>
+        <div class="rec-text">
+          <div class="rec-title">Future: Automated Visualization Dashboard</div>
+          <div class="rec-desc">Protocol distribution data extracted by the parser can be piped into a Matplotlib/Plotly dashboard to generate live-updating protocol pie charts and connection heatmaps for SOC display boards.</div>
+        </div>
+      </div>
+    </ul>
+
+    <div class="section-sep"></div>
+
+    <!-- ─ 10. MITRE ATT&CK ─ -->
+    <div class="section-heading">
+      <div class="section-num">10</div>
+      <div class="section-title-text">
+        <span>Threat Framework Alignment</span>
+        <h2>MITRE ATT&amp;CK Mapping &amp; Learning Outcomes</h2>
+      </div>
+    </div>
+
+    <p>The traffic patterns and threat indicators identified during this engagement map to the following <strong>MITRE ATT&amp;CK Framework</strong> techniques, validating Blue Team detection readiness:</p>
+
+    <table class="osint-table">
+      <thead>
+        <tr>
+          <th>ATT&amp;CK ID</th>
+          <th>Technique</th>
+          <th>Tactic</th>
+          <th>Observed / Verified</th>
+          <th>Blue Team Response</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>T1040</td>
+          <td>Network Sniffing</td>
+          <td>Credential Access</td>
+          <td>HTTP cleartext payloads on Port 80</td>
+          <td><span class="badge-clean">Detected</span></td>
+        </tr>
+        <tr>
+          <td>T1071.004</td>
+          <td>DNS Application Layer Protocol</td>
+          <td>Command &amp; Control</td>
+          <td>DNS query traffic audited — No C2 found</td>
+          <td><span class="badge-clean">Audited</span></td>
+        </tr>
+        <tr>
+          <td>T1557.002</td>
+          <td>ARP Cache Poisoning</td>
+          <td>Collection</td>
+          <td>ARP tables verified — No spoofing</td>
+          <td><span class="badge-clean">Cleared</span></td>
+        </tr>
+        <tr>
+          <td>T1048</td>
+          <td>Exfiltration Over Alt. Protocol</td>
+          <td>Exfiltration</td>
+          <td>DNS entropy checked — No exfil found</td>
+          <td><span class="badge-clean">Cleared</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Core Skills Demonstrated by this Engagement:</strong></p>
+    <ul>
+      <li><strong>Network Forensics:</strong> Decoding Ethernet, IPv4/IPv6, TCP, UDP, HTTP, and DNS layer structures from binary packet data.</li>
+      <li><strong>Threat Hunting:</strong> Applying structured display filters and automated parsing to identify anomalies from baseline traffic.</li>
+      <li><strong>OSINT Investigation:</strong> Cross-referencing live IP addresses against VirusTotal, WHOIS, and AbuseIPDB to build an IOC registry.</li>
+      <li><strong>Scripting &amp; Automation:</strong> Developing a zero-dependency Python binary parser to scale the forensic investigation workflow.</li>
+      <li><strong>Security Framework Mapping:</strong> Aligning findings to NIST CSF and MITRE ATT&amp;CK to communicate risk in industry-standard language.</li>
+    </ul>
+
+    <div class="section-sep"></div>
+
+    <!-- ─ 11. Conclusion ─ -->
+    <div class="section-heading">
+      <div class="section-num">11</div>
+      <div class="section-title-text">
+        <span>Summary</span>
+        <h2>Conclusion</h2>
+      </div>
+    </div>
+
+    <div class="conclusion-box">
+      <h3>&#x1F4CB; Analysis Complete &mdash; No Active Threats Detected</h3>
+      <p>
+        This network traffic analysis engagement successfully demonstrated the core skills expected of a Blue Team Security Operations Center analyst. A total of <strong style="color:#90e0ef;">4,307 packets</strong> were captured and systematically analyzed across HTTP, DNS, ARP, and TCP/TLS protocols. The network environment was verified to be operating within expected parameters, with no evidence of malicious activity, data exfiltration, or active attacks during the monitoring window.
+        <br><br>
+        The identification of cleartext HTTP transmissions provides a concrete, actionable finding for the defensive hardening roadmap. All external IP addresses were confirmed as legitimate infrastructure belonging to globally trusted organizations (Akamai, Cloudflare, DigiCert). Three targeted security recommendations mapped to NIST CSF, four MITRE ATT&amp;CK techniques verified, and a custom Python parser tool developed — this project represents a complete, professional Blue Team network audit.
+      </p>
+    </div>
+
+  </div><!-- end page-content -->
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <span class="left">InlighnTech &middot; Blue Team Internship &middot; Project 4</span>
+    <span class="center">REF: IT-SEC-BC-P4-2026-001 &middot; CONFIDENTIAL</span>
+    <span class="right">June 15, 2026</span>
+  </div>
+
+</div><!-- end document -->
+
+</body>
+</html>

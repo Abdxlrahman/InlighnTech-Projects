@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Investigation Report | INC-2026-0621 | Aegis Cybersecurity</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --navy: #0b1929;
+            --navy-mid: #102339;
+            --navy-light: #163451;
+            --blue: #1565c0;
+            --blue-light: #1976d2;
+            --accent: #e53935;
+            --accent-light: #ef5350;
+            --orange: #f57c00;
+            --green: #2e7d32;
+            --green-light: #43a047;
+            --text: #1a1a2e;
+            --text-secondary: #4a5568;
+            --text-light: #718096;
+            --border: #dee2e8;
+            --bg: #f4f6f9;
+            --white: #ffffff;
+            --critical-bg: #fff5f5;
+            --critical-border: #fed7d7;
+            --warning-bg: #fffbf0;
+            --warning-border: #fcefc7;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 10pt;
+            line-height: 1.6;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            background: var(--white);
+        }
+
+        /* ═══════════════════════════════════════
+           COVER PAGE
+        ═══════════════════════════════════════ */
+        .cover-page {
+            width: 100%;
+            min-height: 297mm;
+            background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 45%, #0d2137 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            page-break-after: always;
+        }
+
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(21,101,192,0.25) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .cover-page::after {
+            content: '';
+            position: absolute;
+            bottom: 60px;
+            left: -60px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(229,57,53,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .cover-topbar {
+            background: var(--accent);
+            padding: 12px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cover-topbar span {
+            color: white;
+            font-size: 9pt;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .cover-body {
+            flex: 1;
+            padding: 60px 50px 40px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-org {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 70px;
+        }
+
+        .cover-org-icon {
+            width: 46px;
+            height: 46px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .cover-org-name {
+            color: white;
+            font-size: 14pt;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .cover-org-sub {
+            color: rgba(255,255,255,0.5);
+            font-size: 8.5pt;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        .cover-divider {
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin-bottom: 28px;
+        }
+
+        .cover-label {
+            color: rgba(255,255,255,0.45);
+            font-size: 8.5pt;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .cover-title {
+            color: white;
+            font-size: 30pt;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 14px;
+        }
+
+        .cover-subtitle {
+            color: rgba(255,255,255,0.65);
+            font-size: 13pt;
+            font-weight: 400;
+            margin-bottom: 50px;
+            line-height: 1.4;
+        }
+
+        .cover-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(229,57,53,0.15);
+            border: 1px solid rgba(229,57,53,0.5);
+            border-radius: 20px;
+            padding: 7px 16px;
+            margin-bottom: 50px;
+        }
+
+        .cover-status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-light);
+            border-radius: 50%;
+        }
+
+        .cover-status-text {
+            color: #ef9a9a;
+            font-size: 9pt;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .cover-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 50px;
+        }
+
+        .cover-meta-item {
+            background: rgba(255,255,255,0.05);
+            padding: 18px 22px;
+        }
+
+        .cover-meta-item:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .cover-meta-label {
+            color: rgba(255,255,255,0.4);
+            font-size: 7.5pt;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .cover-meta-value {
+            color: white;
+            font-size: 10pt;
+            font-weight: 600;
+        }
+
+        .cover-footer {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 22px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-footer-left {
+            color: rgba(255,255,255,0.3);
+            font-size: 8pt;
+        }
+
+        .cover-footer-right {
+            color: rgba(255,255,255,0.3);
+            font-size: 8pt;
+            text-align: right;
+        }
+
+        /* ═══════════════════════════════════════
+           CONTENT PAGES
+        ═══════════════════════════════════════ */
+        .content-page {
+            width: 100%;
+            padding: 0;
+            page-break-before: always;
+        }
+
+        .page-header {
+            background: var(--navy);
+            padding: 14px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header-left {
+            color: rgba(255,255,255,0.5);
+            font-size: 8pt;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .page-header-right {
+            color: rgba(255,255,255,0.35);
+            font-size: 8pt;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .page-content {
+            padding: 40px 50px;
+        }
+
+        .page-footer {
+            border-top: 2px solid var(--border);
+            padding: 12px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .page-footer-left {
+            font-size: 7.5pt;
+            color: var(--text-light);
+        }
+
+        .page-footer-right {
+            font-size: 7.5pt;
+            color: var(--text-light);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-number {
+            width: 36px;
+            height: 36px;
+            background: var(--navy);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13pt;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 16pt;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .section-desc {
+            font-size: 9pt;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        h3 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: var(--navy);
+            margin: 22px 0 10px 0;
+            padding-left: 10px;
+            border-left: 3px solid var(--blue-light);
+        }
+
+        p {
+            font-size: 9.5pt;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            line-height: 1.7;
+        }
+
+        /* ═══════════════════════════════════════
+           EXECUTIVE SUMMARY CARDS
+        ═══════════════════════════════════════ */
+        .exec-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .exec-card {
+            border-radius: 10px;
+            padding: 18px 16px;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+
+        .exec-card.red {
+            background: var(--critical-bg);
+            border-color: var(--critical-border);
+        }
+        .exec-card.orange {
+            background: var(--warning-bg);
+            border-color: var(--warning-border);
+        }
+        .exec-card.blue {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+        .exec-card.green {
+            background: var(--success-bg);
+            border-color: var(--success-border);
+        }
+
+        .exec-card-number {
+            font-size: 28pt;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .exec-card.red .exec-card-number { color: var(--accent); }
+        .exec-card.orange .exec-card-number { color: var(--orange); }
+        .exec-card.blue .exec-card-number { color: var(--blue-light); }
+        .exec-card.green .exec-card-number { color: var(--green); }
+
+        .exec-card-label {
+            font-size: 7.5pt;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        /* ═══════════════════════════════════════
+           CALLOUT BOXES
+        ═══════════════════════════════════════ */
+        .callout {
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin: 16px 0;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .callout.critical {
+            background: var(--critical-bg);
+            border: 1px solid var(--critical-border);
+            border-left: 4px solid var(--accent);
+        }
+
+        .callout.warning {
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-left: 4px solid var(--orange);
+        }
+
+        .callout.info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid var(--blue-light);
+        }
+
+        .callout-icon {
+            font-size: 16px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .callout-body {}
+
+        .callout-title {
+            font-size: 10pt;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .callout.critical .callout-title { color: #b91c1c; }
+        .callout.warning .callout-title { color: #92400e; }
+        .callout.info .callout-title { color: #1e40af; }
+
+        .callout-text {
+            font-size: 9pt;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* ═══════════════════════════════════════
+           TIMELINE
+        ═══════════════════════════════════════ */
+        .timeline {
+            position: relative;
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--orange), var(--blue-light));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -25px;
+            top: 3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .timeline-dot.red { background: var(--accent); }
+        .timeline-dot.orange { background: var(--orange); }
+        .timeline-dot.blue { background: var(--blue-light); }
+        .timeline-dot.green { background: var(--green-light); }
+
+        .timeline-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8pt;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+
+        .timeline-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 9pt;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* ═══════════════════════════════════════
+           TABLES
+        ═══════════════════════════════════════ */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 9pt;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .data-table thead tr {
+            background: var(--navy);
+            color: white;
+        }
+
+        .data-table th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 8pt;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: #fafbfc;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 7.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge.critical {
+            background: var(--critical-bg);
+            color: #b91c1c;
+            border: 1px solid var(--critical-border);
+        }
+
+        .badge.medium {
+            background: var(--warning-bg);
+            color: #92400e;
+            border: 1px solid var(--warning-border);
+        }
+
+        .badge.low {
+            background: var(--success-bg);
+            color: #166534;
+            border: 1px solid var(--success-border);
+        }
+
+        .badge.info {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* ═══════════════════════════════════════
+           CODE BLOCKS
+        ═══════════════════════════════════════ */
+        .code-block {
+            background: var(--navy);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin: 12px 0;
+            border: 1px solid var(--navy-light);
+        }
+
+        .code-block-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .code-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .code-block-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 8pt;
+            font-family: 'JetBrains Mono', monospace;
+            margin-left: 4px;
+        }
+
+        .code-line {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8pt;
+            line-height: 1.8;
+            display: block;
+        }
+
+        .code-line.red { color: #f87171; }
+        .code-line.green { color: #86efac; }
+        .code-line.yellow { color: #fde047; }
+        .code-line.blue { color: #93c5fd; }
+        .code-line.gray { color: rgba(255,255,255,0.45); }
+        .code-line.purple { color: #d8b4fe; }
+        .code-line.white { color: #f1f5f9; }
+
+        /* ═══════════════════════════════════════
+           EVIDENCE SECTION
+        ═══════════════════════════════════════ */
+        .evidence-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .evidence-header {
+            background: var(--navy);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .evidence-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .evidence-num {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 8pt;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .evidence-title {
+            color: white;
+            font-size: 9.5pt;
+            font-weight: 600;
+        }
+
+        .evidence-tag {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.55);
+            font-size: 7.5pt;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .evidence-img-wrapper {
+            background: #0a0915;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .evidence-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            display: block;
+        }
+
+        .evidence-caption {
+            background: #fafbfc;
+            padding: 10px 18px;
+            border-top: 1px solid var(--border);
+            font-size: 8.5pt;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* ═══════════════════════════════════════
+           REMEDIATION STEPS
+        ═══════════════════════════════════════ */
+        .remed-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 16px 0;
+        }
+
+        .remed-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .remed-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .remed-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .remed-icon.red { background: var(--critical-bg); }
+        .remed-icon.orange { background: var(--warning-bg); }
+        .remed-icon.blue { background: #eff6ff; }
+        .remed-icon.green { background: var(--success-bg); }
+
+        .remed-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .remed-priority {
+            font-size: 7.5pt;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .remed-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        .remed-items li {
+            font-size: 8.5pt;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .remed-items li:last-child {
+            border-bottom: none;
+        }
+
+        .remed-items li::before {
+            content: '→';
+            color: var(--blue-light);
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ═══════════════════════════════════════
+           PRINT
+        ═══════════════════════════════════════ */
+        @media print {
+            body { background: white; }
+            .page { box-shadow: none; margin: 0; width: 100%; }
+            .cover-page { min-height: 297mm; }
+            .content-page { page-break-before: always; }
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ COVER PAGE ═══════════════════════════════════ -->
+<div class="page">
+<div class="cover-page">
+    <div class="cover-topbar">
+        <span>🔒 Confidential — Security Investigation Report</span>
+        <span>Ref: INC-2026-0621 &nbsp;|&nbsp; Classification: Restricted</span>
+    </div>
+
+    <div class="cover-body">
+        <div class="cover-org">
+            <div class="cover-org-icon">🛡️</div>
+            <div>
+                <div class="cover-org-name">AEGIS CYBERSECURITY</div>
+                <div class="cover-org-sub">SECURITY OPERATIONS CENTER — THREAT INTELLIGENCE DIVISION</div>
+            </div>
+        </div>
+
+        <div class="cover-divider"></div>
+        <div class="cover-label">Incident Report — Project 6</div>
+        <div class="cover-title">SSH Brute Force<br>Attack & Privilege<br>Escalation Analysis</div>
+        <div class="cover-subtitle">SIEM-Based Log Analysis | Threat Detection | Incident Response</div>
+
+        <div class="cover-status-badge">
+            <div class="cover-status-dot"></div>
+            <div class="cover-status-text">⚠ Critical Incident — Host Compromised | Backdoor Installed</div>
+        </div>
+
+        <div class="cover-meta-grid">
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Incident Reference</div>
+                <div class="cover-meta-value">INC-2026-0621</div>
+            </div>
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Date of Report</div>
+                <div class="cover-meta-value">June 21, 2026</div>
+            </div>
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Analyst</div>
+                <div class="cover-meta-value">SOC Analyst — Tier 2</div>
+            </div>
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Target Hostname</div>
+                <div class="cover-meta-value">debian-server</div>
+            </div>
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Operating System</div>
+                <div class="cover-meta-value">Linux Debian</div>
+            </div>
+            <div class="cover-meta-item">
+                <div class="cover-meta-label">Current Status</div>
+                <div class="cover-meta-value" style="color:#ef9a9a;">🔴 Compromised</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cover-footer">
+        <div class="cover-footer-left">
+            This report is classified RESTRICTED. Unauthorized disclosure is prohibited.<br>
+            © 2026 Aegis Cybersecurity — Threat Intelligence Division
+        </div>
+        <div class="cover-footer-right">
+            Prepared: June 21, 2026<br>
+            Version: 1.0 — Final
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 2 — EXECUTIVE SUMMARY ═══════════════════════════════════ -->
+<div class="page content-page">
+    <div class="page-header">
+        <div class="page-header-left">SSH Brute Force & Privilege Escalation — INC-2026-0621</div>
+        <div class="page-header-right">CONFIDENTIAL | AEGIS SOC</div>
+    </div>
+    <div class="page-content">
+        <div class="section-header">
+            <div class="section-number">1</div>
+            <div>
+                <div class="section-title">Executive Summary</div>
+                <div class="section-desc">High-level overview of the security incident and its impact</div>
+            </div>
+        </div>
+
+        <p>On <strong>June 21, 2026</strong>, the Aegis Security Operations Center (SOC) detected and investigated a multi-stage cyberattack targeting the Linux production server <strong>debian-server</strong>. Analysis of <strong>/var/log/auth.log</strong> records confirmed a coordinated SSH brute-force attack originating from an external threat actor at IP address <strong>203.0.113.5</strong>, which resulted in a full system compromise.</p>
+
+        <p>The attacker successfully authenticated into a local system account (<code>support</code>) after executing over <strong>80 rapid password-guessing attempts</strong>. Following initial access, the attacker escalated privileges to <strong>root</strong> via unauthorized sudo commands and created a backdoor user account (<code>backuser</code>) to maintain persistent access. Additionally, a secondary slow-rate scan from an internal device (<code>192.168.1.150</code>) targeting the root account was also identified.</p>
+
+        <div class="callout critical">
+            <div class="callout-icon">🚨</div>
+            <div class="callout-body">
+                <div class="callout-title">Critical Finding — Immediate Action Required</div>
+                <p class="callout-text">Account <strong>'support'</strong> was successfully compromised by external IP <strong>203.0.113.5</strong>. The attacker achieved root-level access and created a persistent backdoor account. The server should be isolated immediately pending full forensic investigation and re-imaging.</p>
+            </div>
+        </div>
+
+        <h3>Key Metrics at a Glance</h3>
+        <div class="exec-grid">
+            <div class="exec-card red">
+                <div class="exec-card-number">92</div>
+                <div class="exec-card-label">Failed SSH Logins</div>
+            </div>
+            <div class="exec-card orange">
+                <div class="exec-card-number">2</div>
+                <div class="exec-card-label">Brute Force Sources</div>
+            </div>
+            <div class="exec-card red">
+                <div class="exec-card-number">1</div>
+                <div class="exec-card-label">Compromised Account</div>
+            </div>
+            <div class="exec-card blue">
+                <div class="exec-card-number">244</div>
+                <div class="exec-card-label">Log Lines Analyzed</div>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 35px;">
+            <div class="section-number">2</div>
+            <div>
+                <div class="section-title">Scope & Log Sources</div>
+                <div class="section-desc">Artifacts collected and analysis scope</div>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Artifact</th>
+                    <th>Source Location</th>
+                    <th>Entries</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>SSH Authentication Log</strong></td>
+                    <td><code>/var/log/auth.log</code></td>
+                    <td>244 lines</td>
+                    <td><span class="badge info">Analyzed</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Failed Login Events</strong></td>
+                    <td>Parsed from auth.log</td>
+                    <td>92 events</td>
+                    <td><span class="badge critical">Suspicious</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Sudo Audit Records</strong></td>
+                    <td>Parsed from auth.log</td>
+                    <td>20 events</td>
+                    <td><span class="badge critical">High Risk</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Successful SSH Sessions</strong></td>
+                    <td>Parsed from auth.log</td>
+                    <td>9 sessions</td>
+                    <td><span class="badge medium">Under Review</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="page-footer">
+        <div class="page-footer-left">INC-2026-0621 | Aegis Cybersecurity — SOC Report | June 21, 2026</div>
+        <div class="page-footer-right">Page 2 of 5</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 3 — ATTACK TIMELINE ═══════════════════════════════════ -->
+<div class="page content-page">
+    <div class="page-header">
+        <div class="page-header-left">SSH Brute Force & Privilege Escalation — INC-2026-0621</div>
+        <div class="page-header-right">CONFIDENTIAL | AEGIS SOC</div>
+    </div>
+    <div class="page-content">
+        <div class="section-header">
+            <div class="section-number">3</div>
+            <div>
+                <div class="section-title">Incident Timeline & Attack Analysis</div>
+                <div class="section-desc">Chronological reconstruction of the attack phases</div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot blue"></div>
+                <div class="timeline-time">Phase 1 — Approx. 04:00 | IP: 192.168.1.150</div>
+                <div class="timeline-title">Internal Low-Rate Brute Force (Reconnaissance)</div>
+                <p class="timeline-desc">An internal device at <strong>192.168.1.150</strong> began a slow, low-frequency scan targeting the <code>root</code> account via SSH. Attempts were spaced approximately 10 minutes apart — a classic indicator of a rate-limiting bypass technique to evade automated security alerts. A total of 12 failed authentication events were recorded from this source.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot orange"></div>
+                <div class="timeline-time">Phase 2 — Approx. 08:00 | IP: 203.0.113.5</div>
+                <div class="timeline-title">External High-Velocity Brute Force Attack</div>
+                <p class="timeline-desc">An external IP address <strong>203.0.113.5</strong> initiated a rapid, automated credential-stuffing attack targeting 9 distinct system usernames including <code>root</code>, <code>admin</code>, <code>support</code>, <code>mysql</code>, <code>oracle</code>, and others. A total of <strong>80 failed login attempts</strong> were recorded in under 5 minutes — consistent with automated brute-force tooling.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot red"></div>
+                <div class="timeline-time">Phase 3 — 00:06:20 | IP: 203.0.113.5 → Account: support</div>
+                <div class="timeline-title">🔓 Account Compromise — Successful Authentication</div>
+                <p class="timeline-desc">The attacker successfully authenticated as the local account <code>support</code> from the attacking IP. The SSH daemon accepted the password and opened an interactive remote shell session.</p>
+                <div class="code-block">
+                    <div class="code-block-header">
+                        <div class="code-dot" style="background:#ef4444"></div>
+                        <div class="code-dot" style="background:#f59e0b"></div>
+                        <div class="code-dot" style="background:#22c55e"></div>
+                        <div class="code-block-title">/var/log/auth.log — Compromise Event</div>
+                    </div>
+                    <span class="code-line green">Jun 24 00:06:20 debian-server sshd[21213]: Accepted password for support from 203.0.113.5 port 55431 ssh2</span>
+                    <span class="code-line blue">Jun 24 00:06:20 debian-server systemd-logind: New session 42 of user support.</span>
+                    <span class="code-line gray">Jun 24 00:06:20 debian-server sshd[21213]: pam_unix(sshd:session): session opened for user support by (uid=0)</span>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot red"></div>
+                <div class="timeline-time">Phase 4 — 00:08:20 to 00:10:05 | Actor: support</div>
+                <div class="timeline-title">💀 Privilege Escalation & Root Shell Acquisition</div>
+                <p class="timeline-desc">After gaining access, the attacker executed a series of unauthorized sudo commands. Two attempts to read <code>/etc/shadow</code> and to create a new user via <code>useradd</code> were blocked by sudo policy. However, on the third attempt, the attacker successfully launched a root bash shell using <code>sudo /bin/bash</code>:</p>
+                <div class="code-block">
+                    <div class="code-block-header">
+                        <div class="code-dot" style="background:#ef4444"></div>
+                        <div class="code-dot" style="background:#f59e0b"></div>
+                        <div class="code-dot" style="background:#22c55e"></div>
+                        <div class="code-block-title">/var/log/auth.log — Privilege Escalation</div>
+                    </div>
+                    <span class="code-line yellow">Jun 24 00:08:20 debian-server sudo: support : command not allowed ; COMMAND=/usr/bin/cat /etc/shadow</span>
+                    <span class="code-line yellow">Jun 24 00:09:05 debian-server sudo: support : command not allowed ; COMMAND=/usr/bin/useradd -m backuser</span>
+                    <span class="code-line red">Jun 24 00:10:05 debian-server sudo:   support : TTY=pts/2 ; USER=root ; COMMAND=/bin/bash</span>
+                    <span class="code-line red">Jun 24 00:10:05 debian-server sudo: pam_unix(sudo:session): session opened for user root by (uid=0)</span>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot red"></div>
+                <div class="timeline-time">Phase 5 — 00:15:05 | Actor: root (via support)</div>
+                <div class="timeline-title">🕳️ Persistence — Backdoor Account Created</div>
+                <p class="timeline-desc">Within the elevated root shell, the attacker created a new local account named <code>backuser</code> with UID 1003 and assigned it a home directory and interactive shell — establishing a hidden persistence mechanism for future unauthorized re-entry.</p>
+                <div class="code-block">
+                    <div class="code-block-header">
+                        <div class="code-dot" style="background:#ef4444"></div>
+                        <div class="code-dot" style="background:#f59e0b"></div>
+                        <div class="code-dot" style="background:#22c55e"></div>
+                        <div class="code-block-title">/var/log/auth.log — Backdoor Installation</div>
+                    </div>
+                    <span class="code-line purple">Jun 24 00:15:05 debian-server useradd: new user: name=backuser, UID=1003, GID=1003, home=/home/backuser, shell=/bin/bash</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-footer">
+        <div class="page-footer-left">INC-2026-0621 | Aegis Cybersecurity — SOC Report | June 21, 2026</div>
+        <div class="page-footer-right">Page 3 of 5</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 4 — IOC & EVIDENCE ═══════════════════════════════════ -->
+<div class="page content-page">
+    <div class="page-header">
+        <div class="page-header-left">SSH Brute Force & Privilege Escalation — INC-2026-0621</div>
+        <div class="page-header-right">CONFIDENTIAL | AEGIS SOC</div>
+    </div>
+    <div class="page-content">
+        <div class="section-header">
+            <div class="section-number">4</div>
+            <div>
+                <div class="section-title">Indicators of Compromise (IoCs)</div>
+                <div class="section-desc">Forensic artifacts isolated for SIEM alerting and firewall integration</div>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>IoC Type</th>
+                    <th>Observed Value</th>
+                    <th>Context</th>
+                    <th>Risk</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>IP Address</strong></td>
+                    <td><code>203.0.113.5</code></td>
+                    <td>External attacker — 80 failed SSH attempts + successful login</td>
+                    <td><span class="badge critical">Critical</span></td>
+                    <td>Block at perimeter firewall</td>
+                </tr>
+                <tr>
+                    <td><strong>IP Address</strong></td>
+                    <td><code>192.168.1.150</code></td>
+                    <td>Internal scanner — slow brute force against root (12 attempts)</td>
+                    <td><span class="badge medium">Medium</span></td>
+                    <td>Isolate & investigate device</td>
+                </tr>
+                <tr>
+                    <td><strong>User Account</strong></td>
+                    <td><code>support</code></td>
+                    <td>Account compromised via brute force from 203.0.113.5</td>
+                    <td><span class="badge critical">Critical</span></td>
+                    <td>Disable, reset password, audit sessions</td>
+                </tr>
+                <tr>
+                    <td><strong>User Account</strong></td>
+                    <td><code>backuser</code></td>
+                    <td>Backdoor persistence account created by attacker at 00:15:05</td>
+                    <td><span class="badge critical">Critical</span></td>
+                    <td>Remove immediately: userdel -r backuser</td>
+                </tr>
+                <tr>
+                    <td><strong>Sudo Command</strong></td>
+                    <td><code>/bin/bash</code></td>
+                    <td>Used by 'support' to spawn interactive root shell</td>
+                    <td><span class="badge critical">Critical</span></td>
+                    <td>Remove from sudoers, audit sudoers file</td>
+                </tr>
+                <tr>
+                    <td><strong>Target Accounts</strong></td>
+                    <td><code>root, admin, mysql, oracle...</code></td>
+                    <td>9 usernames targeted in automated credential stuffing run</td>
+                    <td><span class="badge medium">Medium</span></td>
+                    <td>Enforce password policies for all accounts</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-header" style="margin-top: 35px;">
+            <div class="section-number">5</div>
+            <div>
+                <div class="section-title">Evidence Collection & SIEM Dashboard Visuals</div>
+                <div class="section-desc">Forensic screenshots captured during the log analysis investigation</div>
+            </div>
+        </div>
+
+        <div class="evidence-card">
+            <div class="evidence-header">
+                <div class="evidence-header-left">
+                    <span class="evidence-num">EV-01</span>
+                    <span class="evidence-title">CLI Log Analyzer — Automated Security Parsing Output</span>
+                </div>
+                <span class="evidence-tag">scripts/log_analyzer.py</span>
+            </div>
+            <div class="evidence-img-wrapper">
+                <img class="evidence-img" src="../screenshots/01_cli_log_analyzer_output.png" alt="CLI Log Analyzer Output">
+            </div>
+            <div class="evidence-caption">Figure 1: Python log_analyzer.py execution showing: 92 failed SSH logins, 9 successful logins, 2 brute-force IP sources, 1 confirmed account compromise, and 3 critical sudo escalation events detected automatically.</div>
+        </div>
+
+        <div class="evidence-card">
+            <div class="evidence-header">
+                <div class="evidence-header-left">
+                    <span class="evidence-num">EV-02</span>
+                    <span class="evidence-title">Aegis SIEM Console — Threat Analytics Dashboard Overview</span>
+                </div>
+                <span class="evidence-tag">dashboard/index.html</span>
+            </div>
+            <div class="evidence-img-wrapper">
+                <img class="evidence-img" src="../screenshots/02_siem_dashboard_overview.png" alt="SIEM Dashboard Overview">
+            </div>
+            <div class="evidence-caption">Figure 2: Aegis SIEM dashboard showing the login attempts timeline with a visible spike at 08:00 corresponding to the rapid brute-force attack, the authentication success ratio doughnut chart (92% failed vs. 8% successful), and the 8 detected security incidents counter.</div>
+        </div>
+    </div>
+    <div class="page-footer">
+        <div class="page-footer-left">INC-2026-0621 | Aegis Cybersecurity — SOC Report | June 21, 2026</div>
+        <div class="page-footer-right">Page 4 of 5</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 5 — MORE EVIDENCE + REMEDIATION ═══════════════════════════════════ -->
+<div class="page content-page">
+    <div class="page-header">
+        <div class="page-header-left">SSH Brute Force & Privilege Escalation — INC-2026-0621</div>
+        <div class="page-header-right">CONFIDENTIAL | AEGIS SOC</div>
+    </div>
+    <div class="page-content">
+
+        <div class="evidence-card">
+            <div class="evidence-header">
+                <div class="evidence-header-left">
+                    <span class="evidence-num">EV-03</span>
+                    <span class="evidence-title">SIEM Dashboard — High-Risk Attacking IPs & Security Incidents Feed</span>
+                </div>
+                <span class="evidence-tag">IOC / Threat Intelligence Panel</span>
+            </div>
+            <div class="evidence-img-wrapper">
+                <img class="evidence-img" src="../screenshots/03_ioc_attacker_table.png" alt="Attacking IPs IOC Table">
+            </div>
+            <div class="evidence-caption">Figure 3: The High-Risk Attacking IPs table confirms two CRITICAL THREAT-rated source IPs: 203.0.113.5 (80 failed attempts targeting 8 accounts) and 192.168.1.150 (12 attempts targeting root). The "Critical Security Incidents" feed on the right shows unauthorized sudo command attempts by the compromised support account.</div>
+        </div>
+
+        <div class="evidence-card">
+            <div class="evidence-header">
+                <div class="evidence-header-left">
+                    <span class="evidence-num">EV-04</span>
+                    <span class="evidence-title">Log File Explorer — Color-Coded Syslog Event Terminal</span>
+                </div>
+                <span class="evidence-tag">Log Explorer / Audit Trail</span>
+            </div>
+            <div class="evidence-img-wrapper">
+                <img class="evidence-img" src="../screenshots/05_filtered_sudo_logs.png" alt="Log Explorer Terminal Feed">
+            </div>
+            <div class="evidence-caption">Figure 4: The interactive Log File Explorer terminal showing color-coded authentication events. Red lines indicate failed SSH logins from attacking IPs. Green lines show successful session openings. The timeline correlates directly with the Phase 2 and Phase 3 attack stages identified in Section 3.</div>
+        </div>
+
+        <div class="section-header" style="margin-top: 30px;">
+            <div class="section-number">6</div>
+            <div>
+                <div class="section-title">Remediation & Hardening Recommendations</div>
+                <div class="section-desc">Immediate response and long-term security hardening measures</div>
+            </div>
+        </div>
+
+        <div class="callout warning">
+            <div class="callout-icon">⚡</div>
+            <div class="callout-body">
+                <div class="callout-title">Immediate Priority Actions (Within 24 Hours)</div>
+                <p class="callout-text">The affected server must be isolated from the network immediately. The backdoor account must be removed and the compromised account disabled before any further system access is permitted.</p>
+            </div>
+        </div>
+
+        <div class="remed-grid">
+            <div class="remed-card">
+                <div class="remed-card-header">
+                    <div class="remed-icon red">🚨</div>
+                    <div>
+                        <div class="remed-title">Immediate Containment</div>
+                        <div class="remed-priority">Priority: Critical | Timeline: Now</div>
+                    </div>
+                </div>
+                <ul class="remed-items">
+                    <li>Disconnect debian-server from the network to stop active C2 communication</li>
+                    <li>Remove backdoor account: <code>userdel -r backuser</code></li>
+                    <li>Disable and lock the compromised 'support' account: <code>usermod -L support</code></li>
+                    <li>Kill all active sessions: <code>pkill -KILL -u support</code></li>
+                </ul>
+            </div>
+            <div class="remed-card">
+                <div class="remed-card-header">
+                    <div class="remed-icon orange">🔥</div>
+                    <div>
+                        <div class="remed-title">Network Hardening</div>
+                        <div class="remed-priority">Priority: High | Timeline: 24h</div>
+                    </div>
+                </div>
+                <ul class="remed-items">
+                    <li>Block 203.0.113.5 at the perimeter firewall immediately</li>
+                    <li>Investigate internal device 192.168.1.150 for worm or malware activity</li>
+                    <li>Enable geo-IP blocking to restrict SSH to known regions only</li>
+                    <li>Configure connection-rate limits on the SSH port at firewall level</li>
+                </ul>
+            </div>
+            <div class="remed-card">
+                <div class="remed-card-header">
+                    <div class="remed-icon blue">🔐</div>
+                    <div>
+                        <div class="remed-title">SSH Configuration Hardening</div>
+                        <div class="remed-priority">Priority: High | Timeline: 48h</div>
+                    </div>
+                </div>
+                <ul class="remed-items">
+                    <li>Set <code>PermitRootLogin no</code> in <code>/etc/ssh/sshd_config</code></li>
+                    <li>Set <code>PasswordAuthentication no</code> — enforce SSH key-based login only</li>
+                    <li>Relocate SSH to a non-standard port (e.g. 22022)</li>
+                    <li>Restrict SSH access using <code>AllowUsers</code> directive</li>
+                </ul>
+            </div>
+            <div class="remed-card">
+                <div class="remed-card-header">
+                    <div class="remed-icon green">📊</div>
+                    <div>
+                        <div class="remed-title">SIEM & Monitoring</div>
+                        <div class="remed-priority">Priority: Medium | Timeline: 1 week</div>
+                    </div>
+                </div>
+                <ul class="remed-items">
+                    <li>Deploy and configure <strong>Fail2ban</strong> to auto-ban IPs after 5 failures</li>
+                    <li>Create SIEM alert for any <code>sudo /bin/bash</code> shell spawns</li>
+                    <li>Set alerts for <code>useradd</code> and <code>usermod</code> root-level events</li>
+                    <li>Enable real-time log forwarding to centralized SIEM platform</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 30px;">
+            <div class="section-number">7</div>
+            <div>
+                <div class="section-title">Analyst Conclusion</div>
+                <div class="section-desc">Summary findings and investigation sign-off</div>
+            </div>
+        </div>
+
+        <p>This investigation confirms a <strong>complete multi-stage attack</strong> was carried out against <code>debian-server</code>, progressing from initial reconnaissance through to full root compromise and persistent backdoor installation. The attack is consistent with automated credential-stuffing toolkits commonly used by opportunistic threat actors targeting internet-exposed Linux SSH services.</p>
+
+        <p>The primary failure points identified were: (1) the presence of weak or reused passwords on system accounts, (2) the absence of SSH rate-limiting or brute-force protection, and (3) an overly permissive sudoers configuration that allowed the attacker to spawn a root shell. Immediate remediation of all findings in Section 6 is strongly advised to restore system integrity.</p>
+
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
+            <div style="text-align: right; border-top: 2px solid var(--border); padding-top: 14px; min-width: 220px;">
+                <p style="font-size: 9pt; color: var(--text-light); margin: 0;">Prepared & Reviewed by</p>
+                <p style="font-size: 10.5pt; font-weight: 700; color: var(--navy); margin: 5px 0 2px 0;">SOC Analyst — Tier 2</p>
+                <p style="font-size: 8.5pt; color: var(--text-secondary); margin: 0;">Aegis Cybersecurity — Threat Intelligence</p>
+                <p style="font-size: 8.5pt; color: var(--text-secondary); margin: 2px 0 0 0;">June 21, 2026</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="page-footer-left">INC-2026-0621 | Aegis Cybersecurity — SOC Report | June 21, 2026 | CONFIDENTIAL</div>
+        <div class="page-footer-right">Page 5 of 5</div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Requirements file documenting dependencies
+# The scripts in this project are designed to use only standard libraries
+# (argparse, re, json, datetime, collections, os, sys) to ensure 
+# zero external dependency setup overhead.
+# 
+# Recommended python version:
+python>=3.8

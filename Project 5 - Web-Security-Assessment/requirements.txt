@@ -1,0 +1,30 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# requirements.txt — Web Application Security Assessment Lab
+# ─────────────────────────────────────────────────────────────────────────────
+# This project uses ONLY Python standard library modules.
+# No external pip packages are required to run app.py.
+#
+# Standard Library Modules Used:
+#   - http.server     : HTTP server framework
+#   - socketserver    : TCP server infrastructure
+#   - urllib.parse    : URL query parsing
+#   - html            : HTML entity encoding (output sanitization in SECURE mode)
+#   - logging         : Structured console logging
+#   - time            : Rate limiting timestamp tracking
+#   - collections     : defaultdict for login attempt tracking
+#   - typing          : Type hints (Dict, List, Optional)
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# OPTIONAL: Security Testing & Automation Tools
+# (Install separately as needed for extended lab exercises)
+# ─────────────────────────────────────────────────────────────────────────────
+# The following tools are referenced in the assessment but are standalone
+# applications installed independently — NOT pip packages:
+#
+#   Burp Suite Community Edition  : https://portswigger.net/burp/communitydownload
+#   OWASP ZAP v2.14.0             : https://www.zaproxy.org/download/
+#   Nmap 7.94                     : https://nmap.org/download.html
+#   SQLMap                        : https://sqlmap.org/
+#
+# Python version requirement: >= 3.8
+# ─────────────────────────────────────────────────────────────────────────────

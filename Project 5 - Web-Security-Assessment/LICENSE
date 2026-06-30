@@ -1,0 +1,39 @@
+MIT License
+
+Copyright (c) 2026 Web Security Analyst Intern
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+IMPORTANT EDUCATIONAL DISCLAIMER
+-------------------------------------------------------------------------------
+This project was developed exclusively for educational and cybersecurity
+internship assessment purposes. The vulnerable web application (app.py) and
+all associated penetration testing demonstrations contained in this repository
+are intended solely for use in controlled, isolated lab environments.
+
+The techniques, payloads, and methods documented herein MUST NOT be applied
+against any live system, network, or application without explicit written
+authorization from the system owner.
+
+Unauthorized use of these techniques against systems without permission is
+illegal under the Computer Fraud and Abuse Act (CFAA, USA), the IT Act 2000
+(India), the Computer Misuse Act (UK), and equivalent legislation worldwide.
+
+The author assumes no liability for misuse of any content in this repository.

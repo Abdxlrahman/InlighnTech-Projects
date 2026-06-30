@@ -1,0 +1,108 @@
+{
+    "metadata": {
+        "report_type": "IoC Export \u2014 SSH Auth Log Analysis",
+        "incident_reference": "INC-2026-0621",
+        "analyst": "Aegis Cybersecurity \u2014 SOC Analyst Tier 2",
+        "generated_at": "2026-06-30T01:40:18.315889",
+        "analyzer_version": "2.0.0",
+        "hostname": "debian-server",
+        "log_source": "/var/log/auth.log"
+    },
+    "summary": {
+        "total_failed_logins": 92,
+        "brute_force_sources": 2,
+        "compromised_accounts": 1,
+        "high_risk_sudo_events": 3,
+        "backdoor_accounts_detected": 1
+    },
+    "brute_force_sources": [
+        {
+            "ip": "192.168.1.150",
+            "failed_attempts": 12,
+            "targeted_users": [
+                "root"
+            ],
+            "severity": "CRITICAL",
+            "cvss_score_range": "9.0\u201310.0",
+            "nist_function": "RESPOND",
+            "recommended_action": "Block at perimeter firewall"
+        },
+        {
+            "ip": "203.0.113.5",
+            "failed_attempts": 80,
+            "targeted_users": [
+                "admin",
+                "administrator",
+                "guest",
+                "mysql",
+                "oracle",
+                "root",
+                "support",
+                "test",
+                "user"
+            ],
+            "severity": "CRITICAL",
+            "cvss_score_range": "9.0\u201310.0",
+            "nist_function": "RESPOND",
+            "recommended_action": "Block at perimeter firewall"
+        }
+    ],
+    "compromised_accounts": [
+        {
+            "username": "support",
+            "source_ip": "203.0.113.5",
+            "timestamp": "Jun 29 09:45:14",
+            "severity": "CRITICAL",
+            "recommended_action": "Disable account and rotate credentials"
+        }
+    ],
+    "backdoor_accounts": [
+        {
+            "username": "backuser",
+            "created_at": "Jun 29 09:53:12",
+            "severity": "CRITICAL",
+            "recommended_action": "userdel -r backuser"
+        }
+    ],
+    "high_risk_sudo_events": [
+        {
+            "timestamp": "Jun 29 09:47:12",
+            "user": "support",
+            "details": "command not allowed ; TTY=pts/2 ; PWD=/home/support ; USER=root ; COMMAND=/usr/bin/cat /etc/shadow",
+            "denied": true,
+            "severity": "HIGH",
+            "cvss_score_range": "7.0\u20138.9",
+            "nist_function": "DETECT"
+        },
+        {
+            "timestamp": "Jun 29 09:47:57",
+            "user": "support",
+            "details": "command not allowed ; TTY=pts/2 ; PWD=/home/support ; USER=root ; COMMAND=/usr/bin/useradd -m backuser",
+            "denied": true,
+            "severity": "HIGH",
+            "cvss_score_range": "7.0\u20138.9",
+            "nist_function": "DETECT"
+        },
+        {
+            "timestamp": "Jun 29 09:48:12",
+            "user": "support",
+            "details": "TTY=pts/2 ; PWD=/home/support ; USER=root ; COMMAND=/bin/bash",
+            "denied": false,
+            "severity": "CRITICAL",
+            "cvss_score_range": "9.0\u201310.0",
+            "nist_function": "RESPOND"
+        }
+    ],
+    "ioc_ip_list": [
+        {
+            "ip": "203.0.113.5",
+            "failed_attempts": 80,
+            "classification": "CRITICAL"
+        },
+        {
+            "ip": "192.168.1.150",
+            "failed_attempts": 12,
+            "classification": "CRITICAL"
+        }
+    ]
+}

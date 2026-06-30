@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis SIEM - Threat Detection Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <div class="brand-text">
+                    <h1>AEGIS</h1>
+                    <span>SIEM CONSOLE v1.0.4</span>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                <a href="#ioc-section" class="nav-item"><i class="fa-solid fa-virus-slash"></i> Indicators of Compromise</a>
+                <a href="#log-explorer-section" class="nav-item"><i class="fa-solid fa-list-check"></i> Log Explorer</a>
+            </nav>
+            <div class="system-status">
+                <div class="status-indicator online"></div>
+                <div class="status-details">
+                    <p class="status-title">Monitoring Agent</p>
+                    <p class="status-sub">Active & Analyzing</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard View -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="welcome-text">
+                    <h2>Threat Analytics Overview</h2>
+                    <p>Correlating authentication logs & detecting active indicators of compromise.</p>
+                </div>
+                <div class="action-buttons">
+                    <label class="btn btn-secondary" for="log-upload">
+                        <i class="fa-solid fa-upload"></i> Import New Log
+                    </label>
+                    <input type="file" id="log-upload" style="display: none;" accept=".txt,.log">
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <i class="fa-solid fa-file-pdf"></i> Export PDF Report
+                    </button>
+                </div>
+            </header>
+
+            <!-- Metrics Cards -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-info">
+                        <h3>TOTAL LOG LINES</h3>
+                        <p class="metric-value" id="total-logs">0</p>
+                    </div>
+                    <div class="metric-icon blue">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                </div>
+                <div class="metric-card alert">
+                    <div class="metric-info">
+                        <h3>FAILED LOGINS</h3>
+                        <p class="metric-value" id="failed-logins">0</p>
+                        <span class="trend down"><i class="fa-solid fa-triangle-exclamation"></i> Brute Force Sign detected</span>
+                    </div>
+                    <div class="metric-icon red">
+                        <i class="fa-solid fa-user-xmark"></i>
+                    </div>
+                </div>
+                <div class="metric-card success">
+                    <div class="metric-info">
+                        <h3>SUCCESSFUL LOGINS</h3>
+                        <p class="metric-value" id="success-logins">0</p>
+                    </div>
+                    <div class="metric-icon green">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                </div>
+                <div class="metric-card critical">
+                    <div class="metric-info">
+                        <h3>DETECTED INCIDENTS</h3>
+                        <p class="metric-value" id="incidents-count">0</p>
+                        <span class="trend down"><i class="fa-solid fa-skull-crossbones"></i> Sudo abuse detected</span>
+                    </div>
+                    <div class="metric-icon orange">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="chart-container large">
+                    <div class="chart-header">
+                        <h3><i class="fa-solid fa-timeline"></i> Login Attempts Over Time</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container small">
+                    <div class="chart-header">
+                        <h3><i class="fa-solid fa-chart-pie"></i> Authentication Success Ratio</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="ratioChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Incident Overview and Attackers -->
+            <section class="threat-grid" id="ioc-section">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fa-solid fa-skull"></i> High-Risk Attacking IPs (IOCs)</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Failed Logins</th>
+                                    <th>Target Accounts</th>
+                                    <th>Risk Level</th>
+                                    <th>Action Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attacker-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="incident-card-container">
+                    <div class="incident-header">
+                        <h3><i class="fa-solid fa-bell"></i> Critical Security Incidents</h3>
+                    </div>
+                    <div class="incident-list" id="security-alerts-feed">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Log Explorer -->
+            <section class="log-explorer" id="log-explorer-section">
+                <div class="explorer-header">
+                    <h3><i class="fa-solid fa-terminal"></i> Log File Explorer</h3>
+                    <div class="filters">
+                        <input type="text" id="log-search" placeholder="Search logs (e.g. IP, username, command)...">
+                        <select id="log-filter">
+                            <option value="all">All Events</option>
+                            <option value="failed">Failed Logins</option>
+                            <option value="success">Successful Logins</option>
+                            <option value="sudo">Sudo & Privilege Actions</option>
+                            <option value="backdoor">Backdoor User Events</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="terminal-body" id="log-terminal">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Load the exported logs data JS -->
+    <script src="log_data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

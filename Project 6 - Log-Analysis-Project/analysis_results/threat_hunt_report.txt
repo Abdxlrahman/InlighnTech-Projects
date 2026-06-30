@@ -1,0 +1,43 @@
+=============================================================================
+                  AEGIS CYBERSECURITY THREAT HUNTING REPORT                 
+=============================================================================
+  Target Host  : debian-server
+  Report Date  : 2026-06-30 01:40:23
+  Scope Source : C:\Users\abdxl\.gemini\antigravity\scratch\Project 6 - Log-Analysis-Project\collected_logs\auth_logs.txt
+=============================================================================
+
+HYPOTHESIS 1: Threat actors operate outside standard office working hours.
+-----------------------------------------------------------------------------
+  [+] Identified 15 off-hours SSH authentication events.
+  List of abnormal timestamp connections:
+    - Jun 29 03:40:14 | User: webdev     | Source IP: 192.168.1.100   | Status: Accepted
+    - Jun 29 05:40:13 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 05:40:14 | User: webdev     | Source IP: 192.168.1.100   | Status: Accepted
+    - Jun 29 05:50:14 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 06:00:15 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 06:10:16 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 06:20:17 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 06:30:18 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 06:40:19 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 06:50:20 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 07:00:21 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 07:10:22 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 07:20:23 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 07:30:24 | User: root       | Source IP: 192.168.1.150   | Status: Failed
+    - Jun 29 07:40:14 | User: webdev     | Source IP: 192.168.1.100   | Status: Accepted
+
+HYPOTHESIS 2: Automated credential-stuffing tools create distinct volume spikes.
+-----------------------------------------------------------------------------
+  [+] Identified 3 high-frequency minute spikes (threshold: ≥15/min).
+    - Bucket: Jun 29 09:40 | Total attempts: 28   | Dominant IP: 203.0.113.5 (27 attempts)
+    - Bucket: Jun 29 09:41 | Total attempts: 34   | Dominant IP: 203.0.113.5 (34 attempts)
+    - Bucket: Jun 29 09:42 | Total attempts: 19   | Dominant IP: 203.0.113.5 (19 attempts)
+
+HYPOTHESIS 3: External reconnaissance targets multiple non-standard service accounts.
+-----------------------------------------------------------------------------
+  Suspicious IP Account-Probing Profile:
+    - Attacker IP: 203.0.113.5     | Probed Accounts Count: 9  | Users targeted: administrator, test, user, mysql, oracle, guest, admin, support, root
+
+=============================================================================
+  Threat Hunt Completed successfully. IOCs mapped to main incident report.
+=============================================================================

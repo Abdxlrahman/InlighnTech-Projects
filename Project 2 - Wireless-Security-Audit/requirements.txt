@@ -1,0 +1,7 @@
+# Project 2: Wireless Security Audit Python Script Requirements
+# No external modules are required as it uses standard built-in libraries.
+# Optional extensions for advanced scanning and report graphing:
+scapy==2.5.0
+prettytable==3.7.0
+matplotlib==3.7.1
+pandas==2.0.2

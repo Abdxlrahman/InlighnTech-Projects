@@ -1,0 +1,244 @@
+Jun 29 03:40:12 debian-server sshd[6319]: Connection from 192.168.1.100 port 51271 on ipv4
+Jun 29 03:40:14 debian-server sshd[6319]: Accepted password for webdev from 192.168.1.100 port 51271 ssh2
+Jun 29 03:40:15 debian-server systemd-logind: New session 1 of user webdev.
+Jun 29 03:40:15 debian-server sshd[6319]: pam_unix(sshd:session): session opened for user webdev by (uid=0)
+Jun 29 03:55:12 debian-server sudo:   webdev : TTY=pts/0 ; PWD=/home/webdev ; USER=root ; COMMAND=/usr/bin/apt-get update
+Jun 29 03:55:12 debian-server sudo: pam_unix(sudo:session): session opened for user root by (uid=0)
+Jun 29 03:55:24 debian-server sudo: pam_unix(sudo:session): session closed for user root
+Jun 29 04:40:12 debian-server sshd[6319]: pam_unix(sshd:session): session closed for user webdev
+Jun 29 05:40:12 debian-server sshd[2890]: Connection from 192.168.1.100 port 58852 on ipv4
+Jun 29 05:40:12 debian-server sshd[12024]: Connection from 192.168.1.150 port 42358 on ipv4
+Jun 29 05:40:13 debian-server sshd[12024]: Failed password for root from 192.168.1.150 port 42358 ssh2
+Jun 29 05:40:14 debian-server sshd[2890]: Accepted password for webdev from 192.168.1.100 port 58852 ssh2
+Jun 29 05:40:15 debian-server systemd-logind: New session 2 of user webdev.
+Jun 29 05:40:15 debian-server sshd[2890]: pam_unix(sshd:session): session opened for user webdev by (uid=0)
+Jun 29 05:50:13 debian-server sshd[13212]: Connection from 192.168.1.150 port 50497 on ipv4
+Jun 29 05:50:14 debian-server sshd[13212]: Failed password for root from 192.168.1.150 port 50497 ssh2
+Jun 29 05:55:12 debian-server sudo:   webdev : TTY=pts/0 ; PWD=/home/webdev ; USER=root ; COMMAND=/usr/bin/apt-get update
+Jun 29 05:55:12 debian-server sudo: pam_unix(sudo:session): session opened for user root by (uid=0)
+Jun 29 05:55:24 debian-server sudo: pam_unix(sudo:session): session closed for user root
+Jun 29 06:00:14 debian-server sshd[13573]: Connection from 192.168.1.150 port 46961 on ipv4
+Jun 29 06:00:15 debian-server sshd[13573]: Failed password for root from 192.168.1.150 port 46961 ssh2
+Jun 29 06:10:15 debian-server sshd[14900]: Connection from 192.168.1.150 port 43296 on ipv4
+Jun 29 06:10:16 debian-server sshd[14900]: Failed password for root from 192.168.1.150 port 43296 ssh2
+Jun 29 06:20:16 debian-server sshd[12893]: Connection from 192.168.1.150 port 51367 on ipv4
+Jun 29 06:20:17 debian-server sshd[12893]: Failed password for root from 192.168.1.150 port 51367 ssh2
+Jun 29 06:30:17 debian-server sshd[12836]: Connection from 192.168.1.150 port 43629 on ipv4
+Jun 29 06:30:18 debian-server sshd[12836]: Failed password for root from 192.168.1.150 port 43629 ssh2
+Jun 29 06:40:12 debian-server sshd[2890]: pam_unix(sshd:session): session closed for user webdev
+Jun 29 06:40:18 debian-server sshd[10518]: Connection from 192.168.1.150 port 47620 on ipv4
+Jun 29 06:40:19 debian-server sshd[10518]: Failed password for root from 192.168.1.150 port 47620 ssh2
+Jun 29 06:50:19 debian-server sshd[14716]: Connection from 192.168.1.150 port 42709 on ipv4
+Jun 29 06:50:20 debian-server sshd[14716]: Failed password for root from 192.168.1.150 port 42709 ssh2
+Jun 29 07:00:20 debian-server sshd[10798]: Connection from 192.168.1.150 port 43719 on ipv4
+Jun 29 07:00:21 debian-server sshd[10798]: Failed password for root from 192.168.1.150 port 43719 ssh2
+Jun 29 07:10:21 debian-server sshd[11248]: Connection from 192.168.1.150 port 52678 on ipv4
+Jun 29 07:10:22 debian-server sshd[11248]: Failed password for root from 192.168.1.150 port 52678 ssh2
+Jun 29 07:20:22 debian-server sshd[12835]: Connection from 192.168.1.150 port 42513 on ipv4
+Jun 29 07:20:23 debian-server sshd[12835]: Failed password for root from 192.168.1.150 port 42513 ssh2
+Jun 29 07:30:23 debian-server sshd[13449]: Connection from 192.168.1.150 port 48621 on ipv4
+Jun 29 07:30:24 debian-server sshd[13449]: Failed password for root from 192.168.1.150 port 48621 ssh2
+Jun 29 07:40:12 debian-server sshd[7774]: Connection from 192.168.1.100 port 52912 on ipv4
+Jun 29 07:40:14 debian-server sshd[7774]: Accepted password for webdev from 192.168.1.100 port 52912 ssh2
+Jun 29 07:40:15 debian-server systemd-logind: New session 3 of user webdev.
+Jun 29 07:40:15 debian-server sshd[7774]: pam_unix(sshd:session): session opened for user webdev by (uid=0)
+Jun 29 07:55:12 debian-server sudo:   webdev : TTY=pts/0 ; PWD=/home/webdev ; USER=root ; COMMAND=/usr/bin/apt-get update
+Jun 29 07:55:12 debian-server sudo: pam_unix(sudo:session): session opened for user root by (uid=0)
+Jun 29 07:55:24 debian-server sudo: pam_unix(sudo:session): session closed for user root
+Jun 29 08:40:12 debian-server sshd[7774]: pam_unix(sshd:session): session closed for user webdev
+Jun 29 09:40:12 debian-server sshd[6726]: Connection from 192.168.1.100 port 54018 on ipv4
+Jun 29 09:40:12 debian-server sshd[19381]: Connection from 203.0.113.5 port 55045 on ipv4
+Jun 29 09:40:13 debian-server sshd[19381]: Failed password for guest from 203.0.113.5 port 55045 ssh2
+Jun 29 09:40:13 debian-server sshd[16301]: Connection from 203.0.113.5 port 36716 on ipv4
+Jun 29 09:40:14 debian-server sshd[6726]: Accepted password for webdev from 192.168.1.100 port 54018 ssh2
+Jun 29 09:40:14 debian-server sshd[16301]: Failed password for oracle from 203.0.113.5 port 36716 ssh2
+Jun 29 09:40:14 debian-server sshd[15477]: Connection from 203.0.113.5 port 46441 on ipv4
+Jun 29 09:40:15 debian-server systemd-logind: New session 4 of user webdev.
+Jun 29 09:40:15 debian-server sshd[6726]: pam_unix(sshd:session): session opened for user webdev by (uid=0)
+Jun 29 09:40:15 debian-server sshd[15477]: Failed password for admin from 203.0.113.5 port 46441 ssh2
+Jun 29 09:40:15 debian-server sshd[17145]: Connection from 203.0.113.5 port 49129 on ipv4
+Jun 29 09:40:16 debian-server sshd[17145]: Failed password for test from 203.0.113.5 port 49129 ssh2
+Jun 29 09:40:16 debian-server sshd[19105]: Connection from 203.0.113.5 port 34656 on ipv4
+Jun 29 09:40:17 debian-server sshd[19105]: Failed password for administrator from 203.0.113.5 port 34656 ssh2
+Jun 29 09:40:17 debian-server sshd[15222]: Connection from 203.0.113.5 port 48621 on ipv4
+Jun 29 09:40:18 debian-server sshd[15222]: Failed password for mysql from 203.0.113.5 port 48621 ssh2
+Jun 29 09:40:18 debian-server sshd[18666]: Connection from 203.0.113.5 port 32925 on ipv4
+Jun 29 09:40:21 debian-server sshd[18666]: Failed password for guest from 203.0.113.5 port 32925 ssh2
+Jun 29 09:40:21 debian-server sshd[17592]: Connection from 203.0.113.5 port 55488 on ipv4
+Jun 29 09:40:23 debian-server sshd[17592]: Failed password for admin from 203.0.113.5 port 55488 ssh2
+Jun 29 09:40:23 debian-server sshd[19382]: Connection from 203.0.113.5 port 45581 on ipv4
+Jun 29 09:40:26 debian-server sshd[19382]: Failed password for oracle from 203.0.113.5 port 45581 ssh2
+Jun 29 09:40:26 debian-server sshd[16443]: Connection from 203.0.113.5 port 41063 on ipv4
+Jun 29 09:40:27 debian-server sshd[16443]: Failed password for mysql from 203.0.113.5 port 41063 ssh2
+Jun 29 09:40:27 debian-server sshd[19457]: Connection from 203.0.113.5 port 48544 on ipv4
+Jun 29 09:40:28 debian-server sshd[19457]: Failed password for support from 203.0.113.5 port 48544 ssh2
+Jun 29 09:40:28 debian-server sshd[15478]: Connection from 203.0.113.5 port 47919 on ipv4
+Jun 29 09:40:29 debian-server sshd[15478]: Failed password for administrator from 203.0.113.5 port 47919 ssh2
+Jun 29 09:40:29 debian-server sshd[19173]: Connection from 203.0.113.5 port 31710 on ipv4
+Jun 29 09:40:30 debian-server sshd[19173]: Failed password for mysql from 203.0.113.5 port 31710 ssh2
+Jun 29 09:40:30 debian-server sshd[15947]: Connection from 203.0.113.5 port 54789 on ipv4
+Jun 29 09:40:32 debian-server sshd[15947]: Failed password for mysql from 203.0.113.5 port 54789 ssh2
+Jun 29 09:40:32 debian-server sshd[15832]: Connection from 203.0.113.5 port 45312 on ipv4
+Jun 29 09:40:34 debian-server sshd[15832]: Failed password for root from 203.0.113.5 port 45312 ssh2
+Jun 29 09:40:34 debian-server sshd[16148]: Connection from 203.0.113.5 port 45546 on ipv4
+Jun 29 09:40:37 debian-server sshd[16148]: Failed password for user from 203.0.113.5 port 45546 ssh2
+Jun 29 09:40:37 debian-server sshd[17351]: Connection from 203.0.113.5 port 53883 on ipv4
+Jun 29 09:40:38 debian-server sshd[17351]: Failed password for mysql from 203.0.113.5 port 53883 ssh2
+Jun 29 09:40:38 debian-server sshd[16450]: Connection from 203.0.113.5 port 44262 on ipv4
+Jun 29 09:40:40 debian-server sshd[16450]: Failed password for root from 203.0.113.5 port 44262 ssh2
+Jun 29 09:40:40 debian-server sshd[19535]: Connection from 203.0.113.5 port 32995 on ipv4
+Jun 29 09:40:41 debian-server sshd[19535]: Failed password for root from 203.0.113.5 port 32995 ssh2
+Jun 29 09:40:41 debian-server sshd[16272]: Connection from 203.0.113.5 port 45415 on ipv4
+Jun 29 09:40:43 debian-server sshd[16272]: Failed password for guest from 203.0.113.5 port 45415 ssh2
+Jun 29 09:40:43 debian-server sshd[16665]: Connection from 203.0.113.5 port 32049 on ipv4
+Jun 29 09:40:46 debian-server sshd[16665]: Failed password for test from 203.0.113.5 port 32049 ssh2
+Jun 29 09:40:46 debian-server sshd[17122]: Connection from 203.0.113.5 port 51381 on ipv4
+Jun 29 09:40:49 debian-server sshd[17122]: Failed password for mysql from 203.0.113.5 port 51381 ssh2
+Jun 29 09:40:49 debian-server sshd[19299]: Connection from 203.0.113.5 port 41490 on ipv4
+Jun 29 09:40:50 debian-server sshd[19299]: Failed password for test from 203.0.113.5 port 41490 ssh2
+Jun 29 09:40:50 debian-server sshd[15991]: Connection from 203.0.113.5 port 49767 on ipv4
+Jun 29 09:40:51 debian-server sshd[15991]: Failed password for user from 203.0.113.5 port 49767 ssh2
+Jun 29 09:40:51 debian-server sshd[19963]: Connection from 203.0.113.5 port 32523 on ipv4
+Jun 29 09:40:53 debian-server sshd[19963]: Failed password for guest from 203.0.113.5 port 32523 ssh2
+Jun 29 09:40:53 debian-server sshd[18739]: Connection from 203.0.113.5 port 31301 on ipv4
+Jun 29 09:40:55 debian-server sshd[18739]: Failed password for admin from 203.0.113.5 port 31301 ssh2
+Jun 29 09:40:55 debian-server sshd[15428]: Connection from 203.0.113.5 port 37570 on ipv4
+Jun 29 09:40:57 debian-server sshd[15428]: Failed password for test from 203.0.113.5 port 37570 ssh2
+Jun 29 09:40:57 debian-server sshd[18390]: Connection from 203.0.113.5 port 37450 on ipv4
+Jun 29 09:41:00 debian-server sshd[18390]: Failed password for administrator from 203.0.113.5 port 37450 ssh2
+Jun 29 09:41:00 debian-server sshd[17526]: Connection from 203.0.113.5 port 53726 on ipv4
+Jun 29 09:41:01 debian-server sshd[17526]: Failed password for test from 203.0.113.5 port 53726 ssh2
+Jun 29 09:41:01 debian-server sshd[16387]: Connection from 203.0.113.5 port 41479 on ipv4
+Jun 29 09:41:02 debian-server sshd[16387]: Failed password for support from 203.0.113.5 port 41479 ssh2
+Jun 29 09:41:02 debian-server sshd[15990]: Connection from 203.0.113.5 port 32343 on ipv4
+Jun 29 09:41:03 debian-server sshd[15990]: Failed password for mysql from 203.0.113.5 port 32343 ssh2
+Jun 29 09:41:03 debian-server sshd[15871]: Connection from 203.0.113.5 port 36308 on ipv4
+Jun 29 09:41:04 debian-server sshd[15871]: Failed password for administrator from 203.0.113.5 port 36308 ssh2
+Jun 29 09:41:04 debian-server sshd[16309]: Connection from 203.0.113.5 port 30849 on ipv4
+Jun 29 09:41:06 debian-server sshd[16309]: Failed password for administrator from 203.0.113.5 port 30849 ssh2
+Jun 29 09:41:06 debian-server sshd[18746]: Connection from 203.0.113.5 port 41039 on ipv4
+Jun 29 09:41:07 debian-server sshd[18746]: Failed password for user from 203.0.113.5 port 41039 ssh2
+Jun 29 09:41:07 debian-server sshd[19363]: Connection from 203.0.113.5 port 56341 on ipv4
+Jun 29 09:41:08 debian-server sshd[19363]: Failed password for admin from 203.0.113.5 port 56341 ssh2
+Jun 29 09:41:08 debian-server sshd[16221]: Connection from 203.0.113.5 port 40482 on ipv4
+Jun 29 09:41:10 debian-server sshd[16221]: Failed password for root from 203.0.113.5 port 40482 ssh2
+Jun 29 09:41:10 debian-server sshd[15636]: Connection from 203.0.113.5 port 38831 on ipv4
+Jun 29 09:41:11 debian-server sshd[15636]: Failed password for oracle from 203.0.113.5 port 38831 ssh2
+Jun 29 09:41:11 debian-server sshd[19052]: Connection from 203.0.113.5 port 51591 on ipv4
+Jun 29 09:41:13 debian-server sshd[19052]: Failed password for mysql from 203.0.113.5 port 51591 ssh2
+Jun 29 09:41:13 debian-server sshd[19479]: Connection from 203.0.113.5 port 39619 on ipv4
+Jun 29 09:41:15 debian-server sshd[19479]: Failed password for support from 203.0.113.5 port 39619 ssh2
+Jun 29 09:41:15 debian-server sshd[17393]: Connection from 203.0.113.5 port 55438 on ipv4
+Jun 29 09:41:17 debian-server sshd[17393]: Failed password for admin from 203.0.113.5 port 55438 ssh2
+Jun 29 09:41:17 debian-server sshd[15198]: Connection from 203.0.113.5 port 49756 on ipv4
+Jun 29 09:41:18 debian-server sshd[15198]: Failed password for root from 203.0.113.5 port 49756 ssh2
+Jun 29 09:41:18 debian-server sshd[16287]: Connection from 203.0.113.5 port 30740 on ipv4
+Jun 29 09:41:21 debian-server sshd[16287]: Failed password for admin from 203.0.113.5 port 30740 ssh2
+Jun 29 09:41:21 debian-server sshd[15738]: Connection from 203.0.113.5 port 55285 on ipv4
+Jun 29 09:41:22 debian-server sshd[15738]: Failed password for administrator from 203.0.113.5 port 55285 ssh2
+Jun 29 09:41:22 debian-server sshd[15533]: Connection from 203.0.113.5 port 46990 on ipv4
+Jun 29 09:41:24 debian-server sshd[15533]: Failed password for oracle from 203.0.113.5 port 46990 ssh2
+Jun 29 09:41:24 debian-server sshd[18735]: Connection from 203.0.113.5 port 37720 on ipv4
+Jun 29 09:41:26 debian-server sshd[18735]: Failed password for test from 203.0.113.5 port 37720 ssh2
+Jun 29 09:41:26 debian-server sshd[19005]: Connection from 203.0.113.5 port 48382 on ipv4
+Jun 29 09:41:27 debian-server sshd[19005]: Failed password for support from 203.0.113.5 port 48382 ssh2
+Jun 29 09:41:27 debian-server sshd[17642]: Connection from 203.0.113.5 port 34572 on ipv4
+Jun 29 09:41:29 debian-server sshd[17642]: Failed password for oracle from 203.0.113.5 port 34572 ssh2
+Jun 29 09:41:29 debian-server sshd[19382]: Connection from 203.0.113.5 port 55801 on ipv4
+Jun 29 09:41:31 debian-server sshd[19382]: Failed password for administrator from 203.0.113.5 port 55801 ssh2
+Jun 29 09:41:31 debian-server sshd[19974]: Connection from 203.0.113.5 port 44914 on ipv4
+Jun 29 09:41:33 debian-server sshd[19974]: Failed password for guest from 203.0.113.5 port 44914 ssh2
+Jun 29 09:41:33 debian-server sshd[19663]: Connection from 203.0.113.5 port 30092 on ipv4
+Jun 29 09:41:35 debian-server sshd[19663]: Failed password for oracle from 203.0.113.5 port 30092 ssh2
+Jun 29 09:41:35 debian-server sshd[19238]: Connection from 203.0.113.5 port 31909 on ipv4
+Jun 29 09:41:37 debian-server sshd[19238]: Failed password for root from 203.0.113.5 port 31909 ssh2
+Jun 29 09:41:37 debian-server sshd[15759]: Connection from 203.0.113.5 port 32043 on ipv4
+Jun 29 09:41:40 debian-server sshd[15759]: Failed password for test from 203.0.113.5 port 32043 ssh2
+Jun 29 09:41:40 debian-server sshd[16764]: Connection from 203.0.113.5 port 44488 on ipv4
+Jun 29 09:41:42 debian-server sshd[16764]: Failed password for test from 203.0.113.5 port 44488 ssh2
+Jun 29 09:41:42 debian-server sshd[18904]: Connection from 203.0.113.5 port 54210 on ipv4
+Jun 29 09:41:45 debian-server sshd[18904]: Failed password for test from 203.0.113.5 port 54210 ssh2
+Jun 29 09:41:45 debian-server sshd[18375]: Connection from 203.0.113.5 port 36968 on ipv4
+Jun 29 09:41:47 debian-server sshd[18375]: Failed password for oracle from 203.0.113.5 port 36968 ssh2
+Jun 29 09:41:47 debian-server sshd[15810]: Connection from 203.0.113.5 port 39108 on ipv4
+Jun 29 09:41:49 debian-server sshd[15810]: Failed password for administrator from 203.0.113.5 port 39108 ssh2
+Jun 29 09:41:49 debian-server sshd[19729]: Connection from 203.0.113.5 port 48806 on ipv4
+Jun 29 09:41:50 debian-server sshd[19729]: Failed password for admin from 203.0.113.5 port 48806 ssh2
+Jun 29 09:41:50 debian-server sshd[17523]: Connection from 203.0.113.5 port 33244 on ipv4
+Jun 29 09:41:52 debian-server sshd[17523]: Failed password for test from 203.0.113.5 port 33244 ssh2
+Jun 29 09:41:52 debian-server sshd[15821]: Connection from 203.0.113.5 port 35488 on ipv4
+Jun 29 09:41:53 debian-server sshd[15821]: Failed password for test from 203.0.113.5 port 35488 ssh2
+Jun 29 09:41:53 debian-server sshd[18238]: Connection from 203.0.113.5 port 40164 on ipv4
+Jun 29 09:41:56 debian-server sshd[18238]: Failed password for guest from 203.0.113.5 port 40164 ssh2
+Jun 29 09:41:56 debian-server sshd[15134]: Connection from 203.0.113.5 port 31924 on ipv4
+Jun 29 09:41:58 debian-server sshd[15134]: Failed password for support from 203.0.113.5 port 31924 ssh2
+Jun 29 09:41:58 debian-server sshd[15568]: Connection from 203.0.113.5 port 53732 on ipv4
+Jun 29 09:42:00 debian-server sshd[15568]: Failed password for test from 203.0.113.5 port 53732 ssh2
+Jun 29 09:42:00 debian-server sshd[15634]: Connection from 203.0.113.5 port 36469 on ipv4
+Jun 29 09:42:03 debian-server sshd[15634]: Failed password for oracle from 203.0.113.5 port 36469 ssh2
+Jun 29 09:42:03 debian-server sshd[18387]: Connection from 203.0.113.5 port 56262 on ipv4
+Jun 29 09:42:05 debian-server sshd[18387]: Failed password for support from 203.0.113.5 port 56262 ssh2
+Jun 29 09:42:05 debian-server sshd[17113]: Connection from 203.0.113.5 port 43712 on ipv4
+Jun 29 09:42:06 debian-server sshd[17113]: Failed password for administrator from 203.0.113.5 port 43712 ssh2
+Jun 29 09:42:06 debian-server sshd[19564]: Connection from 203.0.113.5 port 45378 on ipv4
+Jun 29 09:42:08 debian-server sshd[19564]: Failed password for user from 203.0.113.5 port 45378 ssh2
+Jun 29 09:42:08 debian-server sshd[16484]: Connection from 203.0.113.5 port 52257 on ipv4
+Jun 29 09:42:09 debian-server sshd[16484]: Failed password for user from 203.0.113.5 port 52257 ssh2
+Jun 29 09:42:09 debian-server sshd[15234]: Connection from 203.0.113.5 port 34497 on ipv4
+Jun 29 09:42:12 debian-server sshd[15234]: Failed password for support from 203.0.113.5 port 34497 ssh2
+Jun 29 09:42:12 debian-server sshd[19513]: Connection from 203.0.113.5 port 37021 on ipv4
+Jun 29 09:42:14 debian-server sshd[19513]: Failed password for administrator from 203.0.113.5 port 37021 ssh2
+Jun 29 09:42:14 debian-server sshd[19766]: Connection from 203.0.113.5 port 37813 on ipv4
+Jun 29 09:42:16 debian-server sshd[19766]: Failed password for user from 203.0.113.5 port 37813 ssh2
+Jun 29 09:42:16 debian-server sshd[16658]: Connection from 203.0.113.5 port 39695 on ipv4
+Jun 29 09:42:18 debian-server sshd[16658]: Failed password for admin from 203.0.113.5 port 39695 ssh2
+Jun 29 09:42:18 debian-server sshd[16113]: Connection from 203.0.113.5 port 47067 on ipv4
+Jun 29 09:42:21 debian-server sshd[16113]: Failed password for administrator from 203.0.113.5 port 47067 ssh2
+Jun 29 09:42:21 debian-server sshd[19387]: Connection from 203.0.113.5 port 50893 on ipv4
+Jun 29 09:42:23 debian-server sshd[19387]: Failed password for guest from 203.0.113.5 port 50893 ssh2
+Jun 29 09:42:23 debian-server sshd[15869]: Connection from 203.0.113.5 port 50252 on ipv4
+Jun 29 09:42:26 debian-server sshd[15869]: Failed password for mysql from 203.0.113.5 port 50252 ssh2
+Jun 29 09:42:26 debian-server sshd[18733]: Connection from 203.0.113.5 port 36645 on ipv4
+Jun 29 09:42:27 debian-server sshd[18733]: Failed password for mysql from 203.0.113.5 port 36645 ssh2
+Jun 29 09:42:27 debian-server sshd[17615]: Connection from 203.0.113.5 port 38594 on ipv4
+Jun 29 09:42:28 debian-server sshd[17615]: Failed password for user from 203.0.113.5 port 38594 ssh2
+Jun 29 09:42:28 debian-server sshd[19103]: Connection from 203.0.113.5 port 47293 on ipv4
+Jun 29 09:42:30 debian-server sshd[19103]: Failed password for administrator from 203.0.113.5 port 47293 ssh2
+Jun 29 09:42:30 debian-server sshd[16692]: Connection from 203.0.113.5 port 43333 on ipv4
+Jun 29 09:42:33 debian-server sshd[16692]: Failed password for user from 203.0.113.5 port 43333 ssh2
+Jun 29 09:42:33 debian-server sshd[15732]: Connection from 203.0.113.5 port 49206 on ipv4
+Jun 29 09:42:35 debian-server sshd[15732]: Failed password for root from 203.0.113.5 port 49206 ssh2
+Jun 29 09:42:35 debian-server sshd[16444]: Connection from 203.0.113.5 port 39020 on ipv4
+Jun 29 09:42:38 debian-server sshd[16444]: Failed password for user from 203.0.113.5 port 39020 ssh2
+Jun 29 09:45:12 debian-server sshd[21928]: Connection from 203.0.113.5 port 55431 on ipv4
+Jun 29 09:45:14 debian-server sshd[21928]: Accepted password for support from 203.0.113.5 port 55431 ssh2
+Jun 29 09:45:14 debian-server systemd-logind: New session 42 of user support.
+Jun 29 09:45:14 debian-server sshd[21928]: pam_unix(sshd:session): session opened for user support by (uid=0)
+Jun 29 09:47:12 debian-server sudo:   support : command not allowed ; TTY=pts/2 ; PWD=/home/support ; USER=root ; COMMAND=/usr/bin/cat /etc/shadow
+Jun 29 09:47:57 debian-server sudo:   support : command not allowed ; TTY=pts/2 ; PWD=/home/support ; USER=root ; COMMAND=/usr/bin/useradd -m backuser
+Jun 29 09:48:12 debian-server sudo:   support : TTY=pts/2 ; PWD=/home/support ; USER=root ; COMMAND=/bin/bash
+Jun 29 09:48:12 debian-server sudo: pam_unix(sudo:session): session opened for user root by (uid=0)
+Jun 29 09:53:12 debian-server useradd: new user: name=backuser, UID=1003, GID=1003, home=/home/backuser, shell=/bin/bash
+Jun 29 09:55:12 debian-server sudo:   webdev : TTY=pts/0 ; PWD=/home/webdev ; USER=root ; COMMAND=/usr/bin/apt-get update
+Jun 29 09:55:12 debian-server sudo: pam_unix(sudo:session): session opened for user root by (uid=0)
+Jun 29 09:55:24 debian-server sudo: pam_unix(sudo:session): session closed for user root
+Jun 29 10:03:12 debian-server sudo: pam_unix(sudo:session): session closed for user root
+Jun 29 10:03:17 debian-server sshd[21928]: pam_unix(sshd:session): session closed for user support
+Jun 29 10:40:12 debian-server sshd[6726]: pam_unix(sshd:session): session closed for user webdev
+Jun 29 11:40:12 debian-server sshd[8659]: Connection from 192.168.1.100 port 59272 on ipv4
+Jun 29 11:40:12 debian-server sshd[25356]: Connection from 192.168.1.100 port 59532 on ipv4
+Jun 29 11:40:14 debian-server sshd[8659]: Accepted password for webdev from 192.168.1.100 port 59272 ssh2
+Jun 29 11:40:15 debian-server systemd-logind: New session 5 of user webdev.
+Jun 29 11:40:15 debian-server sshd[8659]: pam_unix(sshd:session): session opened for user webdev by (uid=0)
+Jun 29 11:40:15 debian-server sshd[25356]: Accepted password for webdev from 192.168.1.100 port 59532 ssh2
+Jun 29 11:55:12 debian-server sudo:   webdev : TTY=pts/0 ; PWD=/home/webdev ; USER=root ; COMMAND=/usr/bin/apt-get update
+Jun 29 11:55:12 debian-server sudo: pam_unix(sudo:session): session opened for user root by (uid=0)
+Jun 29 11:55:24 debian-server sudo: pam_unix(sudo:session): session closed for user root
+Jun 29 12:10:12 debian-server sshd[25356]: pam_unix(sshd:session): session closed for user webdev
+Jun 29 12:40:12 debian-server sshd[8659]: pam_unix(sshd:session): session closed for user webdev
+Jun 29 13:40:12 debian-server sshd[27150]: Connection from 192.168.1.100 port 61686 on ipv4
+Jun 29 13:40:15 debian-server sshd[27150]: Accepted password for webdev from 192.168.1.100 port 61686 ssh2
+Jun 29 14:10:12 debian-server sshd[27150]: pam_unix(sshd:session): session closed for user webdev
+Jun 29 15:40:12 debian-server sshd[26661]: Connection from 192.168.1.100 port 57324 on ipv4
+Jun 29 15:40:15 debian-server sshd[26661]: Accepted password for webdev from 192.168.1.100 port 57324 ssh2
+Jun 29 16:10:12 debian-server sshd[26661]: pam_unix(sshd:session): session closed for user webdev

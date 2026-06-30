@@ -1,0 +1,28 @@
+# ============================================================
+# requirements.txt
+# Project 4: Network Traffic Analysis & Threat Detection
+# InlighnTech — Blue Team Cybersecurity Internship
+# Date: June 15, 2026
+# ============================================================
+#
+# CORE REQUIREMENT
+# ----------------
+# Python 3.8 or higher is required to run scripts/pcap_analyzer.py
+# No third-party packages are needed — the analyzer uses only
+# Python standard library modules (struct, socket, os, sys, logging).
+#
+# OPTIONAL: Install these only if you want to extend the project
+# with advanced packet analysis or visualization capabilities.
+# ============================================================
+
+# Optional: Advanced packet analysis (not required for core script)
+# scapy>=2.5.0
+
+# Optional: Pandas for structured IOC data export to CSV/Excel
+# pandas>=2.0.0
+
+# Optional: Matplotlib for generating protocol distribution charts
+# matplotlib>=3.7.0
+
+# Optional: Rich library for enhanced terminal output formatting
+# rich>=13.0.0
