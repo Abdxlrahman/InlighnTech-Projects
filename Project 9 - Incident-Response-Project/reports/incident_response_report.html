@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Response Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #f9f9fb;
+        }
+        .page {
+            background-color: #fff;
+            padding: 50px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-top: 5px solid #d32f2f;
+        }
+        h1 {
+            color: #1a1a1a;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            font-size: 28px;
+        }
+        h2 {
+            color: #d32f2f;
+            margin-top: 30px;
+            font-size: 22px;
+        }
+        h3 {
+            color: #333;
+            font-size: 18px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .meta-info {
+            background-color: #f1f3f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .meta-info p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .meta-info span {
+            font-weight: normal;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+        }
+        .highlight {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .timeline {
+            border-left: 3px solid #d32f2f;
+            padding-left: 20px;
+            margin-left: 10px;
+        }
+        .timeline-item {
+            margin-bottom: 15px;
+        }
+        .timeline-time {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <h1>Incident Response Investigation Report</h1>
+        
+        <div class="meta-info">
+            <p>Date of Report: <span>June 27, 2026</span></p>
+            <p>Incident Type: <span>Unauthorized Access & Malware Execution</span></p>
+            <p>Analyst Name: <span>SOC Intern (Abdxl)</span></p>
+            <p>Status: <span>Contained & Remediated</span></p>
+        </div>
+
+        <h2>1. Executive Summary</h2>
+        <p>On June 27, 2026, the Security Operations Center (SOC) detected anomalous activities originating from a production Linux server. An investigation was immediately launched following the standard incident response lifecycle. The analysis revealed that an external threat actor successfully compromised the <span class="highlight">root</span> account via an SSH brute-force attack. Following the breach, the attacker executed a malicious payload and established a persistent outbound connection to a known malicious Command and Control (C2) server. Containment measures were swiftly enacted, and the system has been secured.</p>
+
+        <h2>2. Incident Description & Evidence Collected</h2>
+        <p>The investigation utilized several critical evidence sources to reconstruct the attack:</p>
+        <ul>
+            <li><strong>Authentication Logs (auth.log / system_logs.txt)</strong>: Showed multiple failed SSH login attempts followed by a successful login.</li>
+            <li><strong>Process Execution Logs</strong>: Revealed unauthorized use of <code>wget</code> and execution of a payload from the <code>/tmp</code> directory.</li>
+            <li><strong>Network Traffic Logs (netstat / suspicious_connections.txt)</strong>: Identified an active TCP connection to an external, untrusted IP address over port 443.</li>
+        </ul>
+
+        <h2>3. Attack Timeline Reconstruction</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <span class="timeline-time">01:14:02 - 01:14:18</span>
+                <p>Multiple failed SSH login attempts detected for the <code>root</code> user from external IP <code>192.168.1.105</code>.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">01:14:22</span>
+                <p>Successful SSH authentication for <code>root</code> from <code>192.168.1.105</code>. Attackers gain interactive shell access.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">01:15:30</span>
+                <p>Attacker executes <code>wget</code> to download a payload (<code>payload.sh</code>) from <code>http://malicious-domain.com</code> and saves it as <code>/tmp/sysupdate</code>.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">01:15:45</span>
+                <p>Attacker changes permissions of <code>/tmp/sysupdate</code> to make it executable using <code>chmod +x</code>.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">01:16:02</span>
+                <p>The malicious binary <code>/tmp/sysupdate</code> is executed.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">01:16:15</span>
+                <p>Network logs indicate an outbound C2 connection established to <code>203.0.113.50</code> on port 443.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">01:18:20</span>
+                <p>Attacker creates a backdoor user account named <code>support_admin</code> and adds it to the <code>sudo</code> group for persistence.</p>
+            </div>
+        </div>
+
+        <h2>4. Indicators of Compromise (IoCs)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Indicator Type</th>
+                    <th>Value</th>
+                    <th>Context</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>IP Address</td>
+                    <td><span class="highlight">192.168.1.105</span></td>
+                    <td>Source of SSH Brute Force attack</td>
+                </tr>
+                <tr>
+                    <td>IP Address</td>
+                    <td><span class="highlight">203.0.113.50</span></td>
+                    <td>Command & Control (C2) Server</td>
+                </tr>
+                <tr>
+                    <td>Domain Name</td>
+                    <td><span class="highlight">malicious-domain.com</span></td>
+                    <td>Payload distribution domain</td>
+                </tr>
+                <tr>
+                    <td>File Hash (MD5)</td>
+                    <td>e59ff97941044f85df5297e1c302d260</td>
+                    <td>Payload script (payload.sh)</td>
+                </tr>
+                <tr>
+                    <td>File Path</td>
+                    <td>/tmp/sysupdate</td>
+                    <td>Executed malicious binary</td>
+                </tr>
+                <tr>
+                    <td>Compromised Account</td>
+                    <td>support_admin</td>
+                    <td>Rogue backdoor account</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5. Containment Actions Taken</h2>
+        <p>To immediately halt the attack and prevent further lateral movement, the following containment strategies were recommended and simulated:</p>
+        <ul>
+            <li><strong>Network Isolation:</strong> The affected server was logically isolated from the production network to sever the C2 connection to <code>203.0.113.50</code>.</li>
+            <li><strong>IP Blocking:</strong> The attacker IP <code>192.168.1.105</code> and C2 IP <code>203.0.113.50</code> were blocked at the perimeter firewall.</li>
+            <li><strong>Process Termination:</strong> The malicious process <code>sysupdate</code> (PID 14601) was forcefully terminated using <code>kill -9</code>.</li>
+            <li><strong>Account Suspension:</strong> The compromised <code>root</code> account password was immediately reset, and active sessions were killed. The rogue <code>support_admin</code> account was locked.</li>
+        </ul>
+
+        <h2>6. Remediation & Recovery Recommendations</h2>
+        <p>To restore the system to a secure state and prevent future recurrence, the following remediation steps are mandated:</p>
+        <ol>
+            <li><strong>Eradication:</strong> Remove the malicious file <code>/tmp/sysupdate</code> and delete the unauthorized <code>support_admin</code> user account completely.</li>
+            <li><strong>Hardening SSH:</strong> Disable root login over SSH (<code>PermitRootLogin no</code> in sshd_config) and enforce Key-Based Authentication rather than passwords.</li>
+            <li><strong>Implement Rate Limiting:</strong> Install and configure <code>Fail2Ban</code> to automatically block IP addresses exhibiting brute-force behavior.</li>
+            <li><strong>Vulnerability Patching:</strong> Perform a full system update to patch any existing OS vulnerabilities.</li>
+            <li><strong>Enhanced Logging:</strong> Forward all local authentication and process logs to a centralized SIEM (like ELK or Splunk) for real-time alerting.</li>
+        </ol>
+
+        <p style="text-align: center; margin-top: 50px; font-style: italic; color: #777;">End of Report</p>
+    </div>
+</body>
+</html>
